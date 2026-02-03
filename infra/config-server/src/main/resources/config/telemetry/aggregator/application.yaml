@@ -1,0 +1,16 @@
+aggregator:
+  kafka:
+    main:
+      server_config: "localhost:9092"
+      producer:
+        key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+        value-serializer: "ru.yandex.practicum.kafka.telemetry.serialization.SensorAvroSerializer"
+      consumer:
+        key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+        value-deserializer: "ru.yandex.practicum.kafka.telemetry.serialization.SensorEventDeserializer"
+        group-id: "aggregator-consumer"
+        duration-millis: 100
+        auto-offset-reset: "earliest"
+    topics:
+      sensor: "telemetry.sensors.v1"
+      aggregate: "telemetry.snapshots.v1"
