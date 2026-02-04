@@ -6,45 +6,12 @@ spring:
         locator:
           enabled: true
       default-filters:
-        - PrefixPath=/api/v1
         - CircuitBreaker=myCircuitBreaker
       routes:
-        - id: shopping_cart_circuitbreaker_route
-          uri: lb://shopping-cart
+        - id: main_route
+          uri: lb://main-service
           predicates:
-            - Path=/shopping-cart/**
-        - id: shopping-store_circuitbreaker_route
-          uri: lb://shopping-store
-          predicates:
-            - Path=/shopping-store/**
-          filters:
-            - name: Retry
-              args:
-                retries: 3
-                statuses: NOT_FOUND
-                methods: GET, POST
-                exceptions: ru.yandex.practicum.commerce.interaction.api.exception.NotFoundResource
-                backoff:
-                  firstBackoff: 10ms
-                  maxBackoff: 50ms
-                  factor: 2
-                  basedOnPreviousValue: false
-        - id: delivery_circuitbreaker_route
-          uri: lb://delivery
-          predicates:
-            - Path=/delivery/**
-        - id: order_circuitbreaker_route
-          uri: lb://order
-          predicates:
-            - Path=/order/**
-        - id: payment_circuitbreaker_route
-          uri: lb://payment
-          predicates:
-            - Path=/payment/**
-        - id: warehouse_circuitbreaker_route
-          uri: lb://warehouse
-          predicates:
-            - Path=/warehouse/**
+            - Path=/**
 
 resilience4j:
   circuitbreaker:
