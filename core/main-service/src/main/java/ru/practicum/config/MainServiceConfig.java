@@ -8,7 +8,7 @@ import ru.practicum.StatsClient;
 
 @Configuration
 public class MainServiceConfig {
-    @Value("${stats-client.id}")
+    @Value("${stats-client.id:stats-server}")
     private String statsClientId;
 
     @Bean

@@ -27,6 +27,15 @@ spring:
           uri: lb://main-service
           predicates:
             - Path=/compilations/**
+        - id: stats_hit_route
+          uri: lb://stats-server
+          predicates:
+            - Path=/hit
+        - id: stats_stat_route
+          uri: lb://stats-server
+          predicates:
+            - Path=/stats**
+
 
 resilience4j:
   circuitbreaker:
