@@ -1,17 +1,32 @@
-
 spring:
   cloud:
     gateway:
       discovery:
         locator:
           enabled: true
-      default-filters:
-        - CircuitBreaker=myCircuitBreaker
+#      default-filters:
+#        - CircuitBreaker=myCircuitBreaker
       routes:
-        - id: main_route
+        - id: admin_route
           uri: lb://main-service
           predicates:
-            - Path=/**
+            - Path=/admin/**
+        - id: categories_route
+          uri: lb://main-service
+          predicates:
+            - Path=/categories/**
+        - id: users_route
+          uri: lb://main-service
+          predicates:
+            - Path=/users/**
+        - id: events_route
+          uri: lb://main-service
+          predicates:
+            - Path=/events/**
+        - id: compilations_route
+          uri: lb://main-service
+          predicates:
+            - Path=/compilations/**
 
 resilience4j:
   circuitbreaker:

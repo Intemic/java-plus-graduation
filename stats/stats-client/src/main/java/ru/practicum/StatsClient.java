@@ -4,13 +4,14 @@ import dto.EndpointHitDto;
 import dto.ViewStatsDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,15 +20,20 @@ import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Slf4j
-@Component
 public class StatsClient {
     private final RestClient restClient;
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DiscoveryClient discoveryClient;
+    private final String statsServerId;
 
-    public StatsClient(@Value("${stats-client.url:http://localhost:9090}") String uriBase) {
-        this.restClient = RestClient.builder()
-                .baseUrl(uriBase)
-                .build();
+    public StatsClient(@Value("${stats-client.id}") String statsServerId,
+                       DiscoveryClient discoveryClient) {
+//       this.restClient = RestClient.builder()
+//                .baseUrl(uriBase)
+//                .build();
+        this.statsServerId = statsServerId;
+        this.discoveryClient = discoveryClient;
+        this.restClient = getRestClient();
     }
 
     /**
@@ -39,6 +45,11 @@ public class StatsClient {
      * @return true если информация успешно сохранена, false в противном случае
      */
     public boolean saveStat(String app, String uri, String ip) {
+        if (restClient == null) {
+            log.error("Сервер статистики не найден");
+            return false;
+        }
+
         if (app == null || app.isBlank()
                 || uri == null || uri.isBlank()
                 || ip == null || ip.isBlank()) {
@@ -92,6 +103,11 @@ public class StatsClient {
      * @return список статистики просмотров
      */
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        if (restClient == null) {
+            log.error("Сервер статистики не найден");
+            return List.of();
+        }
+
         if (start == null || end == null || end.isBefore(start)) {
             log.error("Дата окнчания раньше даты начала");
             return List.of();
@@ -124,6 +140,27 @@ public class StatsClient {
         } catch (RestClientException ex) {
             log.error(ex.getMessage());
             return List.of();
+        }
+    }
+
+    private RestClient getRestClient() {
+        try {
+            ServiceInstance instance = getInstance();
+            return RestClient.builder()
+                    .baseUrl("http://" + instance.getHost() + ":" + instance.getPort())
+                    .build();
+
+        } catch (RuntimeException ex) {
+            return null;
+        }
+    }
+
+    private ServiceInstance getInstance() {
+        try {
+            return discoveryClient.getInstances(statsServerId).getFirst();
+        } catch (Exception ex) {
+            log.error("Сервер статистики не найден");
+            throw new RuntimeException("Сервер статистики не найден");
         }
     }
 }
