@@ -41,7 +41,7 @@ import static ru.practicum.event.specification.EventSpecification.*;
  * Реализация сервиса для работы с событиями.
  */
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class EventServiceImp implements EventService {
     private static final String EVENT_URI_PATTERN = "/events/%d";
@@ -50,6 +50,18 @@ public class EventServiceImp implements EventService {
     private final EventRepository eventRepository;
     private final RequestRepository requestRepository;
     private final StatsClient statsClient;
+
+    public EventServiceImp(CategoryService categoryService,
+                           UserService userService,
+                           EventRepository eventRepository,
+                           RequestRepository requestRepository,
+                           StatsClient statsClient) {
+        this.categoryService = categoryService;
+        this.userService = userService;
+        this.eventRepository = eventRepository;
+        this.requestRepository = requestRepository;
+        this.statsClient = statsClient;
+    }
 
     @Override
     public List<ParticipationRequestDto> getRequests(long userId, long eventId) {

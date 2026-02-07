@@ -4,8 +4,8 @@ spring:
       discovery:
         locator:
           enabled: true
-#      default-filters:
-#        - CircuitBreaker=myCircuitBreaker
+      default-filters:
+        - CircuitBreaker=myCircuitBreaker
       routes:
         - id: admin_route
           uri: lb://main-service
@@ -35,7 +35,6 @@ spring:
           uri: lb://stats-server
           predicates:
             - Path=/stats**
-
 
 resilience4j:
   circuitbreaker:

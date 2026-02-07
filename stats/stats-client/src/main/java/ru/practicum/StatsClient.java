@@ -8,14 +8,20 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.support.RetryTemplate;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import  org.springframework.util.MultiValueMap;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -25,15 +31,15 @@ public class StatsClient {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final DiscoveryClient discoveryClient;
     private final String statsServerId;
+    private final RetryTemplate retryTemplate;
 
     public StatsClient(@Value("${stats-client.id}") String statsServerId,
-                       DiscoveryClient discoveryClient) {
-//       this.restClient = RestClient.builder()
-//                .baseUrl(uriBase)
-//                .build();
+                       DiscoveryClient discoveryClient,
+                       RetryTemplate retryTemplate) {
         this.statsServerId = statsServerId;
         this.discoveryClient = discoveryClient;
-        this.restClient = getRestClient();
+        this.retryTemplate = retryTemplate;
+        this.restClient = RestClient.builder().build();
     }
 
     /**
@@ -66,7 +72,8 @@ public class StatsClient {
 
         try {
             ResponseEntity<Void> response = restClient.post()
-                    .uri("/hit")
+                    //.uri("/hit")
+                    .uri(makeUri("/hit"))
                     .contentType(APPLICATION_JSON)
                     .body(endpointHit)
                     .retrieve()
@@ -116,17 +123,18 @@ public class StatsClient {
         log.info("Запрашиваем статистику : start - %s, end - %s, uris - %s, unique - %b"
                 .formatted(start.format(DATE_TIME_FORMATTER), end.format(DATE_TIME_FORMATTER), uris, unique));
 
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("start", start.format(DATE_TIME_FORMATTER));
+        params.add("end", end.format(DATE_TIME_FORMATTER));
+        params.add("unique", Boolean.valueOf(unique).toString());
+        params.add("uris", uris != null ? String.join(",", uris) : "");
+
         try {
+
+
+
             List<ViewStatsDto> views = restClient.get()
-                    //.uri("/stats", uriVariables)
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/stats")  //
-                            .queryParam("start", start.format(DATE_TIME_FORMATTER))
-                            .queryParam("end", end.format(DATE_TIME_FORMATTER))
-                            .queryParam("unique", unique)
-                            .queryParam("uris", uris != null ? String.join(",", uris) : "")
-                            .build()
-                    )
+                    .uri(makeUri("/stats", params))
                     .header("Content-Type", "application/json")
                     .retrieve()
                     .body(new ParameterizedTypeReference<List<ViewStatsDto>>() {
@@ -143,16 +151,19 @@ public class StatsClient {
         }
     }
 
-    private RestClient getRestClient() {
-        try {
-            ServiceInstance instance = getInstance();
-            return RestClient.builder()
-                    .baseUrl("http://" + instance.getHost() + ":" + instance.getPort())
-                    .build();
+    private URI makeUri(String path) {
+        return makeUri(path, null);
+    }
 
-        } catch (RuntimeException ex) {
-            return null;
-        }
+    private URI makeUri(String path, MultiValueMap<String, String> params) {
+        ServiceInstance instance = retryTemplate.execute( context -> getInstance());
+        UriComponents uriComponents = UriComponentsBuilder
+                .fromUriString("http://" + instance.getHost() + ":" + instance.getPort())
+                .path(path)
+                .queryParams(params)
+                .build();
+
+        return uriComponents.toUri();
     }
 
     private ServiceInstance getInstance() {
