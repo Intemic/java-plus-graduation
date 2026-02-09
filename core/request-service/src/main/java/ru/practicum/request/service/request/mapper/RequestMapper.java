@@ -1,8 +1,8 @@
-package ru.practicum.request.mapper;
+package ru.practicum.request.service.request.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.request.dto.ParticipationRequestDto;
-import ru.practicum.request.model.Request;
+import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
+import ru.practicum.request.service.request.model.Request;
 
 import java.time.format.DateTimeFormatter;
 
@@ -23,8 +23,10 @@ public class RequestMapper {
         return ParticipationRequestDto.builder()
                 .id(request.getId())
                 .created(request.getCreated().format(FORMATTER))
-                .event(request.getEvent().getId())
-                .requester(request.getRequester().getId())
+                //.event(request.getEvent().getId())
+                .event(request.getEvent())
+                //.requester(request.getRequester().getId())
+                .requester(request.getRequester())
                 .status(request.getStatus())
                 .build();
     }

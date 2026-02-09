@@ -1,11 +1,11 @@
-package ru.practicum.request.repository;
+package ru.practicum.request.service.request.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import ru.practicum.request.model.Request;
-import ru.practicum.request.utill.Status;
+import ru.practicum.request.service.request.model.Request;
+import ru.practicum.core.interaction.api.enums.RequestStatus;
 
 import java.util.Collection;
 import java.util.List;
@@ -45,7 +45,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
      * @param status  статус заявки
      * @return количество заявок
      */
-    Long countByEventIdAndStatus(Long eventId, Status status);
+    Long countByEventIdAndStatus(Long eventId, RequestStatus status);
 
     /**
      * Находит заявку по идентификатору события и идентификатору requester'а.
@@ -73,7 +73,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
      */
     @Query("SELECT r FROM Request r WHERE r.event.id IN :eventIds AND r.status = :status")
     List<Request> findAllByEventIdInAndStatus(@Param("eventIds") Collection<Long> eventIds,
-                                              @Param("status") Status status);
+                                              @Param("status") RequestStatus status);
 
     /**
      * Находит заявки для события с указанным статусом.
@@ -82,7 +82,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
      * @param status  статус заявки
      * @return список заявок
      */
-    List<Request> findByEventIdAndStatus(Long eventId, Status status);
+    List<Request> findByEventIdAndStatus(Long eventId, RequestStatus status);
 
     /**
      * Проверяет существование заявки по идентификатору пользователя и события.
@@ -130,7 +130,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
      * @return количество заявок
      */
     @Query("SELECT COUNT(r) FROM Request r WHERE r.event.id = :eventId AND r.status = :status")
-    Long countByEventIdAndStatusQuery(@Param("eventId") Long eventId, @Param("status") Status status);
+    Long countByEventIdAndStatusQuery(@Param("eventId") Long eventId, @Param("status") RequestStatus status);
 
     /**
      * Находит заявки по статусу и списку идентификаторов событий.
@@ -139,7 +139,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
      * @param eventIds список идентификаторов событий
      * @return список заявок
      */
-    List<Request> findByStatusAndEventIdIn(Status status, List<Long> eventIds);
+    List<Request> findByStatusAndEventIdIn(RequestStatus status, List<Long> eventIds);
 
     /**
      * Находит заявки по идентификатору события и списку идентификаторов заявок.

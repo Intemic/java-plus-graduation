@@ -1,4 +1,4 @@
-package ru.practicum.request.service;
+package ru.practicum.request.service.request.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -6,13 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.utill.State;
-import ru.practicum.exception.ConflictResource;
-import ru.practicum.exception.NotFoundResource;
-import ru.practicum.request.dto.ParticipationRequestDto;
-import ru.practicum.request.mapper.RequestMapper;
-import ru.practicum.request.model.Request;
-import ru.practicum.request.repository.RequestRepository;
-import ru.practicum.request.utill.Status;
+import ru.practicum.core.interaction.api.exception.ConflictResource;
+import ru.practicum.core.interaction.api.exception.NotFoundResource;
+import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
+import ru.practicum.request.service.request.mapper.RequestMapper;
+import ru.practicum.request.service.request.model.Request;
+import ru.practicum.request.service.request.repository.RequestRepository;
+import ru.practicum.core.interaction.api.enums.RequestStatus;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
@@ -57,20 +57,22 @@ public class RequestServiceImpl implements RequestService {
             throw new ConflictResource("Заявка на участие в этом событии уже существует");
         }
 
-        Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, Status.CONFIRMED);
+        Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         if (event.getParticipantLimit() > 0 && confirmedRequests >= event.getParticipantLimit()) {
             throw new ConflictResource("Достигнут лимит участников для этого события");
         }
 
-        Status status = Status.PENDING;
+        RequestStatus status = RequestStatus.PENDING;
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
-            status = Status.CONFIRMED;
+            status = RequestStatus.CONFIRMED;
         }
 
         Request request = Request.builder()
                 .created(LocalDateTime.now())
-                .event(event)
-                .requester(user)
+                //.event(event)
+                .event(event.getId())
+                //.requester(user)
+                .requester(user.getId())
                 .status(status)
                 .build();
 
@@ -84,7 +86,7 @@ public class RequestServiceImpl implements RequestService {
         checkUserExists(userId);
         Request request = getRequestByIdAndRequesterId(requestId, userId);
 
-        request.setStatus(Status.CANCELED);
+        request.setStatus(RequestStatus.CANCELED);
         Request updatedRequest = requestRepository.save(request);
 
         return RequestMapper.mapToParticipationRequestDto(updatedRequest);

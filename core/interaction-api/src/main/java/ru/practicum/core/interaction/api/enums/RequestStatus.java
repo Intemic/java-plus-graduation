@@ -1,9 +1,9 @@
-package ru.practicum.request.utill;
+package ru.practicum.core.interaction.api.enums;
 
 /**
  * Перечисление статусов заявок на участие в событиях.
  */
-public enum Status {
+public enum RequestStatus {
     PENDING,    // В ожидании
     CONFIRMED,  // Подтверждено
     CANCELED,   // Отменено

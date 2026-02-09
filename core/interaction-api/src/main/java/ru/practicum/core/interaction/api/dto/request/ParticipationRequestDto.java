@@ -1,7 +1,7 @@
-package ru.practicum.request.dto;
+package ru.practicum.core.interaction.api.dto.request;
 
 import lombok.*;
-import ru.practicum.request.utill.Status;
+import ru.practicum.core.interaction.api.enums.RequestStatus;
 
 /**
  * DTO для представления заявки на участие в событии.
@@ -17,5 +17,5 @@ public class ParticipationRequestDto {
     private Long event;
     private Long id;
     private Long requester;
-    private Status status;
+    private RequestStatus status;
 }

@@ -5,8 +5,8 @@ spring:
       schema-locations: classpath:schema.sql
 
   datasource:
-    driverClassName: "org.h2.Driver"
-    url: jdbc:h2:file:./db/main}
+    driverClassName: "org.postgresql.Driver"
+    url: jdbc:postgresql://ewm-db:8032/requests_db}
     username: ${SPRING_DATASOURCE_USERNAME:main}
     password: ${SPRING_DATASOURCE_PASSWORD:main}
 
@@ -19,5 +19,3 @@ management:
 server:
   port: 0
 
-stats-client:
-  id: stats-server

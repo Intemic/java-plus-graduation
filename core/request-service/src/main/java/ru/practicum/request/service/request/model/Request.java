@@ -1,9 +1,9 @@
-package ru.practicum.request.model;
+package ru.practicum.request.service.request.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 import ru.practicum.event.model.Event;
-import ru.practicum.request.utill.Status;
+import ru.practicum.core.interaction.api.enums.RequestStatus;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
@@ -27,17 +27,19 @@ public class Request {
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
-    private Event event;
+    //private Event event;
+    private Long event;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_id", nullable = false)
-    private User requester;
+    //private User requester;
+    private Long requester;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private Status status;
+    private RequestStatus status;
 
     @PrePersist
     protected void onCreate() {
