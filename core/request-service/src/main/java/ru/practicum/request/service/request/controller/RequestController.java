@@ -8,8 +8,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
 import ru.practicum.core.interaction.api.enums.RequestStatus;
+import ru.practicum.core.interaction.api.interface_.RequestOperation;
 import ru.practicum.request.service.request.service.RequestService;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -19,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/users/{userId}/requests")
 @RequiredArgsConstructor
-public class RequestController {
+public class RequestController implements RequestOperation {
 
     private final RequestService requestService;
 
@@ -34,16 +36,20 @@ public class RequestController {
         return requestService.getRequestsByUserId(userId);
     }
 
-    @GetMapping("/events/{eventId}/requests")
-    public List<ParticipationRequestDto> findByEventId(@PathVariable @Positive Long eventId) {
+//    @GetMapping("/events/{eventId}/requests")
+//    public List<ParticipationRequestDto> findByEventId(@PathVariable @Positive Long eventId,
+//                                                       @RequestParam(required = false) List<Long> requestIds) {
+//        if (requestIds == null)
+//            return requestService.findByEventId(eventId);
+//
+//        return requestService.findByIdInAndEventId(eventId, requestIds);
+//
+//    }
 
-    }
-
-    @GetMapping("/events/{eventId}/status/{status}/count")
-    Long countByEventIdAndStatus(@PathVariable @Positive Long eventId, @NotNull RequestStatus status) {
-
-    }
-
+//    @GetMapping("/events/{eventId}/status/{status}/count")
+//    Long countByEventIdAndStatus(@PathVariable @Positive Long eventId, @NotNull RequestStatus status) {
+//        return requestService.countByEventIdAndStatus(eventId, status);
+//    }
 
 
     /**
@@ -72,4 +78,37 @@ public class RequestController {
                                                  @PathVariable @Positive Long requestId) {
         return requestService.cancelRequest(userId, requestId);
     }
+
+    @Override
+    public List<ParticipationRequestDto> findByEventId(Long eventId, List<Long> requestIds) {
+        return List.of();
+    }
+
+    @Override
+    public Long countByEventIdAndStatus(Long eventId, RequestStatus status) {
+        return 0L;
+    }
+
+    @Override
+    public List<ParticipationRequestDto> findAllByEventIdInAndStatus(RequestStatus status, Collection<Long> eventIds) {
+        return List.of();
+    }
+
+    @Override
+    public void updateStatus(List<ParticipationRequestDto> requests) {
+
+    }
+
+//    @PatchMapping("/requests/update-status")
+//    void updateStatus(@RequestBody @NotNull List<ParticipationRequestDto> requestsDto) {
+//        requestService.updateStatus(requestsDto);
+//    }
+//
+//    @GetMapping("/events/status/{status}")
+//    List<ParticipationRequestDto> findAllByEventIdInAndStatus(@NotNull RequestStatus status,
+//                                                              @RequestParam Collection<Long> eventIds) {
+//
+//    }
+
+
 }

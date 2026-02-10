@@ -27,11 +27,11 @@ public class Request {
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
 
-    @Column(name = "event_id", nullable = false)
-    private Long event;
+    @Column(name = "event_id")
+    private Long eventId;
 
-    @Column(name = "requester_id", nullable = false)
-    private Long requester;
+    @Column(name = "requester_id")
+    private Long requesterId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

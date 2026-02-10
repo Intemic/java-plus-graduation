@@ -18,6 +18,7 @@ import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Реализация сервиса для работы с заявками на участие в событиях.
@@ -70,9 +71,9 @@ public class RequestServiceImpl implements RequestService {
         Request request = Request.builder()
                 .created(LocalDateTime.now())
                 //.event(event)
-                .event(event.getId())
+                .eventId(event.getId())
                 //.requester(user)
-                .requester(user.getId())
+                .requesterId(user.getId())
                 .status(status)
                 .build();
 
@@ -90,6 +91,30 @@ public class RequestServiceImpl implements RequestService {
         Request updatedRequest = requestRepository.save(request);
 
         return RequestMapper.mapToParticipationRequestDto(updatedRequest);
+    }
+
+    @Override
+    public List<ParticipationRequestDto> findByEventId(Long eventId) {
+        return requestRepository.findByEventId(eventId).stream()
+                .map(RequestMapper::mapToParticipationRequestDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ParticipationRequestDto> findByIdInAndEventId(Long eventId, List<Long> requestIds) {
+        return requestRepository.findByIdInAndEventId(requestIds, eventId).stream()
+                .map(RequestMapper::mapToParticipationRequestDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Long countByEventIdAndStatus(Long eventId, RequestStatus status) {
+        return requestRepository.countByEventIdAndStatus(eventId, status);
+    }
+
+    @Override
+    public void updateStatus(List<ParticipationRequestDto> requestsDto) {
+       requestRepository.saveAll(requestsDto.stream().map(RequestMapper::mapFromDto).toList());
     }
 
     private User getUserById(Long userId) {

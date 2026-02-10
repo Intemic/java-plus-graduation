@@ -6,7 +6,7 @@ spring:
 
   datasource:
     driverClassName: "org.postgresql.Driver"
-    url: jdbc:postgresql://ewm-db:8032/requests_db}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:8032/requests_db}
     username: ${SPRING_DATASOURCE_USERNAME:main}
     password: ${SPRING_DATASOURCE_PASSWORD:main}
 

@@ -21,9 +21,9 @@ import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ConflictResource;
 import ru.practicum.exception.NotFoundResource;
 import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
-import ru.practicum.request.mapper.RequestMapper;
-import ru.practicum.request.model.Request;
-import ru.practicum.request.repository.RequestRepository;
+//import ru.practicum.request.mapper.RequestMapper;
+//import ru.practicum.request.model.Request;
+//import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.core.interaction.api.enums.RequestStatus;
 import ru.practicum.user.service.UserService;
 
@@ -69,7 +69,7 @@ public class EventServiceImp implements EventService {
 //        return requestRepository.findByEventId(event.getId()).stream()
 //                .map(RequestMapper::mapToParticipationRequestDto)
 //                .collect(Collectors.toList());
-        return requestRepository.findByEventId(event.getId());
+        return requestRepository.findByEventId(event.getId(), null);
     }
 
     @Override
@@ -156,27 +156,32 @@ public class EventServiceImp implements EventService {
             throw new ConflictResource("Достигнут лимит участников");
         }
 
-        List<Request> requests = requestRepository.findByIdInAndEventId(eventRequestStatus.getRequestIds(), eventId);
+        //List<Request> requests = requestRepository.findByIdInAndEventId(eventRequestStatus.getRequestIds(), eventId);
+        List<ParticipationRequestDto> requests = requestRepository.findByEventId(eventId, eventRequestStatus.getRequestIds());
         List<ParticipationRequestDto> confirmed = new ArrayList<>();
         List<ParticipationRequestDto> rejected = new ArrayList<>();
 
-        for (Request request : requests) {
-            if (request.getStatus() != Status.PENDING) {
+        //for (Request request : requests) {
+        for (ParticipationRequestDto request : requests) {
+            if (request.getStatus() != RequestStatus.PENDING) {
                 throw new ConflictResource("Можно изменить статус только заявок в состоянии ожидания");
             }
 
-            if (eventRequestStatus.getStatus() == Status.CONFIRMED &&
+            if (eventRequestStatus.getStatus() == RequestStatus.CONFIRMED &&
                     (event.getParticipantLimit() == 0 || confirmedCount < event.getParticipantLimit())) {
-                request.setStatus(Status.CONFIRMED);
-                confirmed.add(RequestMapper.mapToParticipationRequestDto(request));
+                request.setStatus(RequestStatus.CONFIRMED);
+                //confirmed.add(RequestMapper.mapToParticipationRequestDto(request));
+                confirmed.add(request);
                 confirmedCount++;
             } else {
-                request.setStatus(Status.REJECTED);
-                rejected.add(RequestMapper.mapToParticipationRequestDto(request));
+                request.setStatus(RequestStatus.REJECTED);
+                //rejected.add(RequestMapper.mapToParticipationRequestDto(request));
+                rejected.add(request);
             }
         }
 
-        requestRepository.saveAll(requests);
+        //requestRepository.saveAll(requests);
+        requestRepository.updateStatus(requests);
 
         return EventRequestStatusUpdateResult.builder()
                 .confirmedRequests(confirmed)
@@ -394,12 +399,17 @@ public class EventServiceImp implements EventService {
         Map<Long, Event> eventMap = events.stream()
                 .collect(Collectors.toMap(Event::getId, Function.identity()));
 
-        Map<Long, Long> eventCountRequest = requestRepository.findAllByEventIdInAndStatus(eventMap.keySet(),
-                        Status.CONFIRMED).stream()
-                .collect(Collectors.groupingBy(request -> request.getEvent().getId(),
-                        Collectors.counting()));
+//        Map<Long, Long> eventCountRequest = requestRepository.findAllByEventIdInAndStatus(eventMap.keySet(),
+//                       RequestStatus.CONFIRMED).stream()
 
-        List<String> listUrl = eventMap.keySet().stream()
+//        Map<Long, Long> eventCountRequest = requestRepository.findAllByEventIdInAndStatus(RequestStatus.CONFIRMED,
+//                        eventMap.keySet()).stream()
+//                .collect(Collectors.groupingBy(request -> request.getEvent(), //request.getEvent().getId(),
+//                        Collectors.counting()));
+
+        Map<Long, Long> eventCountRequest = Map.of();
+
+                List<String> listUrl = eventMap.keySet().stream()
                 .map(EVENT_URI_PATTERN::formatted)
                 .collect(Collectors.toList());
 

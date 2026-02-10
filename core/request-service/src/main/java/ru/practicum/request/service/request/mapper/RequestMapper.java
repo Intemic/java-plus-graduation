@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
 import ru.practicum.request.service.request.model.Request;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -24,10 +25,20 @@ public class RequestMapper {
                 .id(request.getId())
                 .created(request.getCreated().format(FORMATTER))
                 //.event(request.getEvent().getId())
-                .event(request.getEvent())
+                .event(request.getEventId())
                 //.requester(request.getRequester().getId())
-                .requester(request.getRequester())
+                .requester(request.getRequesterId())
                 .status(request.getStatus())
+                .build();
+    }
+
+    public static Request mapFromDto(ParticipationRequestDto requestDto) {
+        return Request.builder()
+                .id(requestDto.getId())
+                .created(LocalDateTime.parse(requestDto.getCreated(), FORMATTER))
+                .eventId(requestDto.getEvent())
+                .requesterId(requestDto.getRequester())
+                .status(requestDto.getStatus())
                 .build();
     }
 }

@@ -71,7 +71,8 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
      * @param status   статус заявки
      * @return список заявок
      */
-    @Query("SELECT r FROM Request r WHERE r.event.id IN :eventIds AND r.status = :status")
+    //@Query("SELECT r FROM Request r WHERE r.event.id IN :eventIds AND r.status = :status")
+    @Query("SELECT r FROM Request r WHERE r.eventId IN :eventIds AND r.status = :status")
     List<Request> findAllByEventIdInAndStatus(@Param("eventIds") Collection<Long> eventIds,
                                               @Param("status") RequestStatus status);
 
@@ -99,7 +100,8 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
      * @param eventId идентификатор события
      * @return количество подтвержденных заявок
      */
-    @Query("SELECT COUNT(r) FROM Request r WHERE r.event.id = :eventId AND r.status = 'CONFIRMED'")
+    //@Query("SELECT COUNT(r) FROM Request r WHERE r.event.id = :eventId AND r.status = 'CONFIRMED'")
+    @Query("SELECT COUNT(r) FROM Request r WHERE r.eventId = :eventId AND r.status = 'CONFIRMED'")
     Long countConfirmedRequestsByEventId(@Param("eventId") Long eventId);
 
     /**
@@ -109,7 +111,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
      * @param eventId     идентификатор события
      * @return список заявок
      */
-    List<Request> findByEventInitiatorIdAndEventId(Long initiatorId, Long eventId);
+    //List<Request> findByEventInitiatorIdAndEventId(Long initiatorId, Long eventId);
 
     /**
      * Находит заявку по идентификатору события и пользователя с использованием JPQL.
@@ -118,7 +120,8 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
      * @param requesterId идентификатор пользователя
      * @return Optional с заявкой, если найдена
      */
-    @Query("SELECT r FROM Request r WHERE r.event.id = :eventId AND r.requester.id = :requesterId")
+    //@Query("SELECT r FROM Request r WHERE r.event.id = :eventId AND r.requester.id = :requesterId")
+    @Query("SELECT r FROM Request r WHERE r.eventId = :eventId AND r.requesterId = :requesterId")
     Optional<Request> findByEventIdAndRequesterIdWithEvent(@Param("eventId") Long eventId,
                                                            @Param("requesterId") Long requesterId);
 
@@ -129,7 +132,8 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
      * @param status  статус заявки
      * @return количество заявок
      */
-    @Query("SELECT COUNT(r) FROM Request r WHERE r.event.id = :eventId AND r.status = :status")
+    //@Query("SELECT COUNT(r) FROM Request r WHERE r.event.id = :eventId AND r.status = :status")
+    @Query("SELECT COUNT(r) FROM Request r WHERE r.eventId = :eventId AND r.status = :status")
     Long countByEventIdAndStatusQuery(@Param("eventId") Long eventId, @Param("status") RequestStatus status);
 
     /**
@@ -148,7 +152,8 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
      * @param requestIds список идентификаторов заявок
      * @return список заявок
      */
-    @Query("SELECT r FROM Request r WHERE r.event.id = :eventId AND r.id IN :requestIds")
+    //@Query("SELECT r FROM Request r WHERE r.event.id = :eventId AND r.id IN :requestIds")
+    @Query("SELECT r FROM Request r WHERE r.eventId = :eventId AND r.id IN :requestIds")
     List<Request> findByEventIdAndIdIn(@Param("eventId") Long eventId, @Param("requestIds") List<Long> requestIds);
 
     /**

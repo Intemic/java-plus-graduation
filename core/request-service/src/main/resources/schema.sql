@@ -3,5 +3,5 @@ CREATE TABLE IF NOT EXISTS requests(
     created timestamp,
     event_id BIGINT,
     requester_id BIGINT,
-    status VARCHAR(20),
+    status VARCHAR(20)
 );
