@@ -1,11 +1,13 @@
 package ru.practicum.request.service.request.controller;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
+import ru.practicum.core.interaction.api.enums.RequestStatus;
 import ru.practicum.request.service.request.service.RequestService;
 
 import java.util.List;
@@ -27,10 +29,22 @@ public class RequestController {
      * @param userId идентификатор пользователя
      * @return список заявок
      */
-    @GetMapping
+    @GetMapping("/users/{userId}/requests")
     public List<ParticipationRequestDto> getRequests(@PathVariable @Positive Long userId) {
         return requestService.getRequestsByUserId(userId);
     }
+
+    @GetMapping("/events/{eventId}/requests")
+    public List<ParticipationRequestDto> findByEventId(@PathVariable @Positive Long eventId) {
+
+    }
+
+    @GetMapping("/events/{eventId}/status/{status}/count")
+    Long countByEventIdAndStatus(@PathVariable @Positive Long eventId, @NotNull RequestStatus status) {
+
+    }
+
+
 
     /**
      * Создает новую заявку на участие в событии.
@@ -39,7 +53,7 @@ public class RequestController {
      * @param eventId идентификатор события
      * @return созданная заявка
      */
-    @PostMapping
+    @PostMapping("/users/{userId}/requests")
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto createRequest(@PathVariable @Positive Long userId,
                                                  @RequestParam @Positive Long eventId) {
@@ -53,7 +67,7 @@ public class RequestController {
      * @param requestId идентификатор заявки
      * @return отмененная заявка
      */
-    @PatchMapping("/{requestId}/cancel")
+    @PatchMapping("/users/{userId}/requests/{requestId}/cancel")
     public ParticipationRequestDto cancelRequest(@PathVariable @Positive Long userId,
                                                  @PathVariable @Positive Long requestId) {
         return requestService.cancelRequest(userId, requestId);

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.StatsClient;
 import ru.practicum.category.service.CategoryService;
+import ru.practicum.core.interaction.api.client.RequestClient;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
@@ -23,7 +24,7 @@ import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
 import ru.practicum.request.mapper.RequestMapper;
 import ru.practicum.request.model.Request;
 import ru.practicum.request.repository.RequestRepository;
-import ru.practicum.request.utill.Status;
+import ru.practicum.core.interaction.api.enums.RequestStatus;
 import ru.practicum.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -47,13 +48,13 @@ public class EventServiceImp implements EventService {
     private final CategoryService categoryService;
     private final UserService userService;
     private final EventRepository eventRepository;
-    private final RequestRepository requestRepository;
+    private final RequestClient requestRepository;
     private final StatsClient statsClient;
 
     public EventServiceImp(CategoryService categoryService,
                            UserService userService,
                            EventRepository eventRepository,
-                           RequestRepository requestRepository,
+                           RequestClient requestRepository,
                            StatsClient statsClient) {
         this.categoryService = categoryService;
         this.userService = userService;
@@ -65,15 +66,18 @@ public class EventServiceImp implements EventService {
     @Override
     public List<ParticipationRequestDto> getRequests(long userId, long eventId) {
         Event event = getEventByIdAndInitiatorId(eventId, userId);
-        return requestRepository.findByEventId(event.getId()).stream()
-                .map(RequestMapper::mapToParticipationRequestDto)
-                .collect(Collectors.toList());
+//        return requestRepository.findByEventId(event.getId()).stream()
+//                .map(RequestMapper::mapToParticipationRequestDto)
+//                .collect(Collectors.toList());
+        return requestRepository.findByEventId(event.getId());
     }
 
     @Override
     public EventFullDto get(long userId, long eventId) {
         Event event = getEventByIdAndInitiatorId(eventId, userId);
-        Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, Status.CONFIRMED);
+        Long confirmedRequests = requestRepository
+               // .countByEventIdAndStatus(eventId, Status.CONFIRMED);
+                .countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         Long views = getViewsForEvent(event.getCreatedOn(), eventId);
         return EventMapper.toEventFullDto(event, confirmedRequests, views);
     }
@@ -130,7 +134,7 @@ public class EventServiceImp implements EventService {
         }
 
         Event updatedEvent = eventRepository.save(event);
-        Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, Status.CONFIRMED);
+        Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         Long views = getViewsForEvent(event.getCreatedOn(), eventId);
         return EventMapper.toEventFullDto(updatedEvent, confirmedRequests, views);
     }
@@ -145,9 +149,9 @@ public class EventServiceImp implements EventService {
             throw new ConflictResource("Подтверждение заявок не требуется для этого события");
         }
 
-        Long confirmedCount = requestRepository.countByEventIdAndStatus(eventId, Status.CONFIRMED);
+        Long confirmedCount = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
 
-        if (eventRequestStatus.getStatus() == Status.CONFIRMED &&
+        if (eventRequestStatus.getStatus() == RequestStatus.CONFIRMED &&
                 event.getParticipantLimit() > 0 && confirmedCount >= event.getParticipantLimit()) {
             throw new ConflictResource("Достигнут лимит участников");
         }

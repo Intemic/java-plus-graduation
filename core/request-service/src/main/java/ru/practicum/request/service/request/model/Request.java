@@ -27,14 +27,10 @@ public class Request {
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id", nullable = false)
-    //private Event event;
+    @Column(name = "event_id", nullable = false)
     private Long event;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "requester_id", nullable = false)
-    //private User requester;
+    @Column(name = "requester_id", nullable = false)
     private Long requester;
 
     @Enumerated(EnumType.STRING)
