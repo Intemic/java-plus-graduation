@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/users/{userId}/requests")
 @RequiredArgsConstructor
-public class RequestController implements RequestOperation {
+public class RequestController {
 
     private final RequestService requestService;
 
@@ -31,7 +31,7 @@ public class RequestController implements RequestOperation {
      * @param userId идентификатор пользователя
      * @return список заявок
      */
-    @GetMapping("/users/{userId}/requests")
+    @GetMapping
     public List<ParticipationRequestDto> getRequests(@PathVariable @Positive Long userId) {
         return requestService.getRequestsByUserId(userId);
     }
@@ -59,7 +59,7 @@ public class RequestController implements RequestOperation {
      * @param eventId идентификатор события
      * @return созданная заявка
      */
-    @PostMapping("/users/{userId}/requests")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto createRequest(@PathVariable @Positive Long userId,
                                                  @RequestParam @Positive Long eventId) {
@@ -73,30 +73,10 @@ public class RequestController implements RequestOperation {
      * @param requestId идентификатор заявки
      * @return отмененная заявка
      */
-    @PatchMapping("/users/{userId}/requests/{requestId}/cancel")
+    @PatchMapping("/{requestId}/cancel")
     public ParticipationRequestDto cancelRequest(@PathVariable @Positive Long userId,
                                                  @PathVariable @Positive Long requestId) {
         return requestService.cancelRequest(userId, requestId);
-    }
-
-    @Override
-    public List<ParticipationRequestDto> findByEventId(Long eventId, List<Long> requestIds) {
-        return List.of();
-    }
-
-    @Override
-    public Long countByEventIdAndStatus(Long eventId, RequestStatus status) {
-        return 0L;
-    }
-
-    @Override
-    public List<ParticipationRequestDto> findAllByEventIdInAndStatus(RequestStatus status, Collection<Long> eventIds) {
-        return List.of();
-    }
-
-    @Override
-    public void updateStatus(List<ParticipationRequestDto> requests) {
-
     }
 
 //    @PatchMapping("/requests/update-status")

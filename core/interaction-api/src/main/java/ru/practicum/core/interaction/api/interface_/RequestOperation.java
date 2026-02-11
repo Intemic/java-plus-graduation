@@ -10,8 +10,10 @@ import java.util.Collection;
 import java.util.List;
 
 
-
 public interface RequestOperation {
+    @GetMapping("/test")
+    boolean test();
+
     @GetMapping("/events/{eventId}")
     List<ParticipationRequestDto> findByEventId(@Positive @PathVariable Long eventId,
                                                 @RequestParam(required = false) List<Long> requestIds);

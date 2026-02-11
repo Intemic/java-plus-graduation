@@ -134,6 +134,7 @@ public class EventServiceImp implements EventService {
         }
 
         Event updatedEvent = eventRepository.save(event);
+        requestRepository.test();
         Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         Long views = getViewsForEvent(event.getCreatedOn(), eventId);
         return EventMapper.toEventFullDto(updatedEvent, confirmedRequests, views);
@@ -149,6 +150,7 @@ public class EventServiceImp implements EventService {
             throw new ConflictResource("Подтверждение заявок не требуется для этого события");
         }
 
+        requestRepository.test();
         Long confirmedCount = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
 
         if (eventRequestStatus.getStatus() == RequestStatus.CONFIRMED &&

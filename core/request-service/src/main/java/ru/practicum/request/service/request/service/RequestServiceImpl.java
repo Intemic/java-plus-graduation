@@ -3,9 +3,11 @@ package ru.practicum.request.service.request.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.event.model.Event;
-import ru.practicum.event.repository.EventRepository;
-import ru.practicum.event.utill.State;
+import ru.practicum.core.interaction.api.client.EventClient;
+import ru.practicum.core.interaction.api.client.UserClient;
+import ru.practicum.core.interaction.api.dto.event.EventFullDto;
+import ru.practicum.core.interaction.api.dto.user.UserDto;
+import ru.practicum.core.interaction.api.enums.EventState;
 import ru.practicum.core.interaction.api.exception.ConflictResource;
 import ru.practicum.core.interaction.api.exception.NotFoundResource;
 import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
@@ -13,8 +15,6 @@ import ru.practicum.request.service.request.mapper.RequestMapper;
 import ru.practicum.request.service.request.model.Request;
 import ru.practicum.request.service.request.repository.RequestRepository;
 import ru.practicum.core.interaction.api.enums.RequestStatus;
-import ru.practicum.user.model.User;
-import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 public class RequestServiceImpl implements RequestService {
 
     private final RequestRepository requestRepository;
-    private final UserRepository userRepository;
-    private final EventRepository eventRepository;
+    private final UserClient userRepository;
+    private final EventClient eventRepository;
 
     @Override
     public List<ParticipationRequestDto> getRequestsByUserId(Long userId) {
@@ -43,14 +43,14 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional
     public ParticipationRequestDto createRequest(Long userId, Long eventId) {
-        User user = getUserById(userId);
-        Event event = getEventById(eventId);
+        UserDto user = getUserById(userId);
+        EventFullDto event = getEventById(eventId);
 
         if (event.getInitiator().getId().equals(userId)) {
             throw new ConflictResource("Инициатор события не может подать заявку на участие в своём событии");
         }
 
-        if (event.getState() != State.PUBLISHED) {
+        if (event.getState() != EventState.PUBLISHED) {
             throw new ConflictResource("Нельзя участвовать в неопубликованном событии");
         }
 
@@ -117,12 +117,12 @@ public class RequestServiceImpl implements RequestService {
        requestRepository.saveAll(requestsDto.stream().map(RequestMapper::mapFromDto).toList());
     }
 
-    private User getUserById(Long userId) {
+    private UserDto getUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundResource("Пользователь с id=" + userId + " не найден"));
     }
 
-    private Event getEventById(Long eventId) {
+    private EventFullDto getEventById(Long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundResource("Событие с id=" + eventId + " не найдено"));
     }
