@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import ru.practicum.event.model.Event;
-import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -50,13 +49,6 @@ public class NewCommentDto {
      */
     @JsonIgnore
     private final LocalDateTime created = LocalDateTime.now();
-
-    /**
-     * Объект автора комментария.
-     * Устанавливается автоматически сервисом, игнорируется при десериализации JSON.
-     */
-    @JsonIgnore
-    private User authorObj;
 
     /**
      * Объект события, к которому относится комментарий.

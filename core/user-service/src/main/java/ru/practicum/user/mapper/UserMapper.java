@@ -1,8 +1,8 @@
 package ru.practicum.user.mapper;
 
 import lombok.experimental.UtilityClass;
+import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.user.dto.NewUserRequest;
-import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.dto.UserShortDto;
 import ru.practicum.user.model.User;
 

@@ -1,11 +1,12 @@
 package ru.practicum.user.service;
 
+import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.user.dto.NewUserRequest;
-import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.model.User;
 import ru.practicum.user.utill.UserGetParam;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Сервис для работы с пользователями.
@@ -44,4 +45,8 @@ public interface UserService {
      * @param userId идентификатор пользователя
      */
     void deleteUser(Long userId);
+
+    Optional<ru.practicum.core.interaction.api.dto.user.UserDto> findById(Long userId);
+
+    boolean existsById(Long userId);
 }

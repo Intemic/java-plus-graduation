@@ -118,7 +118,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
      * @param requesterId идентификатор пользователя
      * @return Optional с заявкой, если найдена
      */
-    @Query("SELECT r FROM Request r WHERE r.event.id = :eventId AND r.requester.id = :requesterId")
+    @Query("SELECT r FROM Request r WHERE r.event.id = :eventId AND r.requesterId = :requesterId")
     Optional<Request> findByEventIdAndRequesterIdWithEvent(@Param("eventId") Long eventId,
                                                            @Param("requesterId") Long requesterId);
 

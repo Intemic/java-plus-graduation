@@ -4,8 +4,11 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.comment.dto.CommentDto;
 import ru.practicum.comment.dto.NewCommentDto;
 import ru.practicum.comment.model.Comment;
+import ru.practicum.core.interaction.api.client.UserClient;
+import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.event.mapper.EventMapper;
-import ru.practicum.user.mapper.UserMapper;
+
+import java.util.Optional;
 
 /**
  * Утилитарный класс для преобразования между сущностями Comment и DTO.
@@ -26,7 +29,7 @@ public class CommentMapper {
         }
 
         return Comment.builder()
-                .author(commentDto.getAuthorObj())
+                .authorId(commentDto.getAuthor())
                 .event(commentDto.getEventObj())
                 .created(commentDto.getCreated())
                 .text(commentDto.getText())
@@ -41,17 +44,27 @@ public class CommentMapper {
      * @return DTO комментария для возврата в API
      * @throws IllegalArgumentException если comment равен null
      */
-    public static CommentDto mapFromComment(Comment comment) {
+    public static CommentDto mapFromComment(Comment comment, UserClient userRepository) {
         if (comment == null) {
             throw new IllegalArgumentException("Comment не может быть null");
         }
 
         return CommentDto.builder()
                 .id(comment.getId())
-                .author(UserMapper.mapToDto(comment.getAuthor()))
-                .event(EventMapper.mapToEventShortDto(comment.getEvent()))
+                .author(toUserDto(comment.getAuthorId(), userRepository))
+                .event(EventMapper.mapToEventShortDto(comment.getEvent(), userRepository))
                 .created(comment.getCreated())
                 .text(comment.getText())
                 .build();
+    }
+
+    public static UserDto toUserDto(long userId, UserClient userClient) {
+        if (userClient == null || userId == 0) {
+            return null;
+        }
+
+        Optional<UserDto> userDtoOptional = userClient.findById(userId);
+        return userDtoOptional.orElse(null);
+
     }
 }

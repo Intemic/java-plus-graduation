@@ -3,17 +3,19 @@ package ru.practicum.event.mapper;
 import lombok.experimental.UtilityClass;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.Category;
+import ru.practicum.core.interaction.api.client.UserClient;
+import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.utill.State;
-import ru.practicum.user.dto.UserShortDto;
-import ru.practicum.user.model.User;
+import ru.practicum.core.interaction.api.dto.user.UserShortDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 /**
  * Маппер для преобразования между сущностями и DTO событий.
@@ -39,7 +41,7 @@ public class EventMapper {
                 .description(newEventDto.getDescription())
                 .category(newEventDto.getCategoryObject())
                 .eventDate(newEventDto.getEventDate())
-                .initiator(newEventDto.getInitiatorObject())
+                .initiatorId(newEventDto.getInitiator())
                 .location(newEventDto.getLocation())
                 .paid(newEventDto.isPaid())
                 .participantLimit(newEventDto.getParticipantLimit())
@@ -58,7 +60,7 @@ public class EventMapper {
      * @param event сущность события
      * @return DTO события
      */
-    public static EventFullDto mapToEventFullDto(Event event) {
+    public static EventFullDto mapToEventFullDto(Event event, UserClient userService) {
         if (event == null) {
             return null;
         }
@@ -69,7 +71,7 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .description(event.getDescription())
                 .category(toCategoryDto(event.getCategory()))
-                .initiator(toUserShortDto(event.getInitiator()))
+                .initiator(toUserShortDto(event.getInitiatorId(), userService))
                 .location(event.getLocation())
                 .paid(event.getPaid())
                 .participantLimit(event.getParticipantLimit())
@@ -89,7 +91,7 @@ public class EventMapper {
      * @param event сущность события
      * @return DTO краткого события
      */
-    public static EventShortDto mapToEventShortDto(Event event) {
+    public static EventShortDto mapToEventShortDto(Event event, UserClient userService) {
         if (event == null) {
             return null;
         }
@@ -99,7 +101,7 @@ public class EventMapper {
                 .title(event.getTitle())
                 .annotation(event.getAnnotation())
                 .category(toCategoryDto(event.getCategory()))
-                .initiator(toUserShortDto(event.getInitiator()))
+                .initiator(toUserShortDto(event.getInitiatorId(), userService))
                 .paid(event.getPaid())
                 .eventDate(formatDateTime(event.getEventDate()))
                 .confirmedRequests(event.getConfirmedRequests())
@@ -126,16 +128,24 @@ public class EventMapper {
     /**
      * Преобразует сущность пользователя в DTO.
      *
-     * @param user сущность пользователя
+     * @param userId сущность пользователя
+     * @param userClient сущность пользователя
      * @return DTO пользователя
      */
-    public static UserShortDto toUserShortDto(User user) {
-        if (user == null) {
+    public static UserShortDto toUserShortDto(long userId, UserClient userClient) {
+        if (userClient == null || userId == 0) {
             return null;
         }
+
+        Optional<UserDto> userDtoOptional = userClient.findById(userId);
+
+        UserDto userDto = null;
+        if (userDtoOptional.isPresent())
+            userDto = userDtoOptional.get();
+
         return UserShortDto.builder()
-                .id(user.getId())
-                .name(user.getName())
+                .id(userId)
+                .name(userDto != null ? userDto.getName() : "НЕ УДАЛОСЬ ПОЛУЧИТЬ!")
                 .build();
     }
 
@@ -151,7 +161,7 @@ public class EventMapper {
      * @param views             количество просмотров
      * @return DTO события
      */
-    public static EventFullDto toEventFullDto(Event event, Long confirmedRequests, Long views) {
+    public static EventFullDto toEventFullDto(Event event, Long confirmedRequests, Long views, UserClient userService) {
         if (event == null) {
             return null;
         }
@@ -162,7 +172,7 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .description(event.getDescription())
                 .category(toCategoryDto(event.getCategory()))
-                .initiator(toUserShortDto(event.getInitiator()))
+                .initiator(toUserShortDto(event.getInitiatorId(), userService))
                 .location(event.getLocation())
                 .paid(event.getPaid())
                 .participantLimit(event.getParticipantLimit())
@@ -184,7 +194,7 @@ public class EventMapper {
      * @param views             количество просмотров
      * @return DTO краткого события
      */
-    public static EventShortDto toEventShortDto(Event event, Long confirmedRequests, Long views) {
+    public static EventShortDto toEventShortDto(Event event, Long confirmedRequests, Long views, UserClient userService) {
         if (event == null) {
             return null;
         }
@@ -194,7 +204,7 @@ public class EventMapper {
                 .title(event.getTitle())
                 .annotation(event.getAnnotation())
                 .category(toCategoryDto(event.getCategory()))
-                .initiator(toUserShortDto(event.getInitiator()))
+                .initiator(toUserShortDto(event.getInitiatorId(), userService))
                 .paid(event.getPaid())
                 .eventDate(formatDateTime(event.getEventDate()))
                 .confirmedRequests(confirmedRequests != null ? confirmedRequests : 0L)

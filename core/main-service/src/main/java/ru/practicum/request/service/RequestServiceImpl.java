@@ -3,6 +3,8 @@ package ru.practicum.request.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.core.interaction.api.client.UserClient;
+import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.utill.State;
@@ -13,8 +15,6 @@ import ru.practicum.request.mapper.RequestMapper;
 import ru.practicum.request.model.Request;
 import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.request.utill.Status;
-import ru.practicum.user.model.User;
-import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.List;
 public class RequestServiceImpl implements RequestService {
 
     private final RequestRepository requestRepository;
-    private final UserRepository userRepository;
+    private final UserClient userRepository;
     private final EventRepository eventRepository;
 
     @Override
@@ -42,10 +42,10 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional
     public ParticipationRequestDto createRequest(Long userId, Long eventId) {
-        User user = getUserById(userId);
+        UserDto user = getUserById(userId);
         Event event = getEventById(eventId);
 
-        if (event.getInitiator().getId().equals(userId)) {
+        if (event.getInitiatorId().equals(userId)) {
             throw new ConflictResource("Инициатор события не может подать заявку на участие в своём событии");
         }
 
@@ -70,7 +70,7 @@ public class RequestServiceImpl implements RequestService {
         Request request = Request.builder()
                 .created(LocalDateTime.now())
                 .event(event)
-                .requester(user)
+                .requesterId(user.getId())
                 .status(status)
                 .build();
 
@@ -90,7 +90,7 @@ public class RequestServiceImpl implements RequestService {
         return RequestMapper.mapToParticipationRequestDto(updatedRequest);
     }
 
-    private User getUserById(Long userId) {
+    private UserDto getUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundResource("Пользователь с id=" + userId + " не найден"));
     }

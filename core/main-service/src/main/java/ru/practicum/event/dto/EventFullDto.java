@@ -6,7 +6,7 @@ import lombok.*;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.model.Location;
 import ru.practicum.event.utill.State;
-import ru.practicum.user.dto.UserShortDto;
+import ru.practicum.core.interaction.api.dto.user.UserShortDto;
 
 /**
  * DTO для полного представления события.

@@ -3,7 +3,6 @@ package ru.practicum.comment.model;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.practicum.event.model.Event;
-import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -35,9 +34,8 @@ public class Comment {
      * Связь многие-к-одному с сущностью User.
      * Загружается лениво для оптимизации производительности.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @Column(name = "author_id", nullable = false)
+    private Long authorId;
 
     /**
      * Событие, к которому относится комментарий.

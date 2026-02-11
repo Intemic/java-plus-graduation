@@ -7,16 +7,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.practicum.exception.ConflictResource;
-import ru.practicum.exception.NotFoundResource;
+import ru.practicum.core.interaction.api.dto.user.UserDto;
+import ru.practicum.core.interaction.api.exception.ConflictResource;
+import ru.practicum.core.interaction.api.exception.NotFoundResource;
 import ru.practicum.user.dto.NewUserRequest;
-import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 import ru.practicum.user.utill.UserGetParam;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Реализация сервиса для работы с пользователями.
@@ -100,5 +101,15 @@ public class UserServiceImp implements UserService {
         }
 
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public Optional<UserDto> findById(Long userId) {
+        return userRepository.findById(userId).map(UserMapper::mapToDto);
+    }
+
+    @Override
+    public boolean existsById(Long userId) {
+        return userRepository.existsById(userId);
     }
 }

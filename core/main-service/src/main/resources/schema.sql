@@ -1,9 +1,3 @@
-CREATE TABLE IF NOT EXISTS users(
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(250),
-    email VARCHAR(254) UNIQUE
-);
-
 CREATE TABLE IF NOT EXISTS categories(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(50) UNIQUE
@@ -26,8 +20,7 @@ CREATE TABLE IF NOT EXISTS events(
     location_lat float,
     location_lon float,
     state VARCHAR(20),
-    FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE CASCADE,
-    FOREIGN KEY(initiator_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS requests(
@@ -36,8 +29,7 @@ CREATE TABLE IF NOT EXISTS requests(
     event_id BIGINT,
     requester_id BIGINT,
     status VARCHAR(20),
-    FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE,
-    FOREIGN KEY(requester_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS compilations(
@@ -60,7 +52,6 @@ CREATE TABLE IF NOT EXISTS comments(
     event_id BIGINT,
     created timestamp,
     text VARCHAR(5000),
-    FOREIGN KEY(author_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE,
     CONSTRAINT unique_keys_author_event UNIQUE(author_id, event_id)
 );

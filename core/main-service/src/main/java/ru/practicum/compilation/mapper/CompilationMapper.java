@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.model.Compilation;
+import ru.practicum.core.interaction.api.client.UserClient;
 import ru.practicum.event.mapper.EventMapper;
 
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ public class CompilationMapper {
      * @param compilation сущность подборки
      * @return DTO подборки
      */
-    public static CompilationDto toDto(Compilation compilation) {
+    public static CompilationDto toDto(Compilation compilation, UserClient userRepository) {
         if (compilation == null) {
             return null;
         }
@@ -31,7 +32,7 @@ public class CompilationMapper {
                 .pinned(compilation.getPinned())
                 .events(compilation.getEvents() != null ?
                         compilation.getEvents().stream()
-                                .map(EventMapper::mapToEventShortDto)
+                                .map(event ->  EventMapper.mapToEventShortDto(event, userRepository))
                                 .collect(Collectors.toList()) :
                         java.util.Collections.emptyList())
                 .build();

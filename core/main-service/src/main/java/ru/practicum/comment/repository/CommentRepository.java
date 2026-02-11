@@ -48,6 +48,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
 
     static Specification<Comment> byAuthor(List<Long> authorIds) {
         return (root, cq, cb) ->
-                root.get("author").get("id").in(authorIds);
+                root.get("authorId").in(authorIds);
     }
 }
