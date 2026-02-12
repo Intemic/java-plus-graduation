@@ -20,9 +20,7 @@ public class UserDto {
     /**
      * Уникальный идентификатор пользователя.
      * <p>
-     * Только для чтения.
      */
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
 
     /**
