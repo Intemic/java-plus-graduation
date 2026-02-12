@@ -14,7 +14,8 @@ import java.util.List;
 public class EventSpecification {
 
     public static Specification<Event> byUser(List<Long> users) {
-        return (root, cq, cb) -> root.get("initiator").get("id").in(users);
+//        return (root, cq, cb) -> root.get("initiator").get("id").in(users);
+        return (root, cq, cb) -> root.get("initiatorId").in(users);
     }
 
     public static Specification<Event> byStates(List<String> states) {

@@ -95,6 +95,7 @@ public class EventServiceImp implements EventService {
         }
 
         eventDto.setCategoryObject(categoryService.getCategoryById(eventDto.getCategory()));
+        eventDto.setInitiator(userId);
         //eventDto.setInitiatorObject(userService.getUserById(userId));
 
         Event event = EventMapper.mapFromNewEventDto(eventDto);

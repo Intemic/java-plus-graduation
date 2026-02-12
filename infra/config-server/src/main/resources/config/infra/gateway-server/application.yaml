@@ -10,7 +10,7 @@ spring:
         - id: admin_route
           uri: lb://main-service
           predicates:
-            - Path=/admin/**
+            - Path=/admin/categories/**, /admin/events/**, /admin/compilations/**
         - id: categories_route
           uri: lb://main-service
           predicates:
