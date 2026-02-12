@@ -4,11 +4,31 @@ spring:
       mode: always
       schema-locations: classpath:schema.sql
 
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+
   datasource:
     driverClassName: "org.postgresql.Driver"
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:8032/main}
     username: ${SPRING_DATASOURCE_USERNAME:main}
     password: ${SPRING_DATASOURCE_PASSWORD:main}
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10
+      failureRateThreshold: 50
+      waitDurationInOpenState: 10000
+      permittedNumberOfCallsInHalfOpenState: 3
+      slidingWindowType: COUNT_BASED
+      minimumNumberOfCalls: 5
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+
+  instances:
+    user-service:
+      baseConfig: default
 
 management:
   endpoints:
