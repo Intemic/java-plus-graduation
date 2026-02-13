@@ -7,6 +7,7 @@ spring:
       default-filters:
         - CircuitBreaker=myCircuitBreaker
       routes:
+        # основной сервис
         - id: admin_route
           uri: lb://main-service
           predicates:
@@ -18,7 +19,7 @@ spring:
         - id: users_route
           uri: lb://main-service
           predicates:
-            - Path=/users/**
+            - Path=/users/*/events/**
         - id: events_route
           uri: lb://main-service
           predicates:
@@ -27,10 +28,17 @@ spring:
           uri: lb://main-service
           predicates:
             - Path=/compilations/**
+        # сервис запросов на участие
+        - id: users_route
+          uri: lb://main-service
+          predicates:
+            - Path=/users/*/requests/**
+        # сервис пользователей
         - id: admin_users_route
           uri: lb://user-service
           predicates:
             - Path=/admin/users/**
+        # сервис статистики
         - id: stats_hit_route
           uri: lb://stats-server
           predicates:
