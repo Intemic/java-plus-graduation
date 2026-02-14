@@ -9,13 +9,14 @@ import ru.practicum.core.interaction.api.dto.event.EventFullDto;
 import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.core.interaction.api.enums.EventState;
 import ru.practicum.core.interaction.api.exception.*;
-import ru.practicum.request.dto.ParticipationRequestDto;
+import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
 import ru.practicum.request.mapper.RequestMapper;
 import ru.practicum.request.model.Request;
 import ru.practicum.request.repository.RequestRepository;
-import ru.practicum.request.utill.Status;
+import ru.practicum.core.interaction.api.enums.RequestStatus;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -28,8 +29,7 @@ public class RequestServiceImpl implements RequestService {
 
     private final RequestRepository requestRepository;
     private final UserClient userRepository;
-    //private final EventClient eventRepository;
-    private EventClient eventRepository;
+    private final EventClient eventRepository;
 
     @Override
     public List<ParticipationRequestDto> getRequestsByUserId(Long userId) {
@@ -57,14 +57,14 @@ public class RequestServiceImpl implements RequestService {
             throw new ConflictResource("Заявка на участие в этом событии уже существует");
         }
 
-        Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, Status.CONFIRMED);
+        Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         if (event.getParticipantLimit() > 0 && confirmedRequests >= event.getParticipantLimit()) {
             throw new ConflictResource("Достигнут лимит участников для этого события");
         }
 
-        Status status = Status.PENDING;
+        RequestStatus status = RequestStatus.PENDING;
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
-            status = Status.CONFIRMED;
+            status = RequestStatus.CONFIRMED;
         }
 
         Request request = Request.builder()
@@ -84,10 +84,43 @@ public class RequestServiceImpl implements RequestService {
         checkUserExists(userId);
         Request request = getRequestByIdAndRequesterId(requestId, userId);
 
-        request.setStatus(Status.CANCELED);
+        request.setStatus(RequestStatus.CANCELED);
         Request updatedRequest = requestRepository.save(request);
 
         return RequestMapper.mapToParticipationRequestDto(updatedRequest);
+    }
+
+    @Override
+    public List<ParticipationRequestDto> findByEventId(Long eventId) {
+        return requestRepository.findByEventId(eventId).stream()
+                .map(RequestMapper::mapToParticipationRequestDto)
+                .toList();
+    }
+
+    @Override
+    public Long countByEventIdAndStatus(Long eventId, RequestStatus status) {
+        return requestRepository.countByEventIdAndStatus(eventId, status);
+    }
+
+    @Override
+    public List<ParticipationRequestDto> findByIdInAndEventId(Long eventId, List<Long> requestIds) {
+        return requestRepository.findByIdInAndEventId(requestIds, eventId).stream()
+                .map(RequestMapper::mapToParticipationRequestDto)
+                .toList();
+    }
+
+    @Override
+    public List<ParticipationRequestDto> findAllByEventIdInAndStatus(RequestStatus status, Collection<Long> eventIds) {
+        return requestRepository.findAllByEventIdInAndStatus(eventIds, status).stream()
+                .map(RequestMapper::mapToParticipationRequestDto)
+                .toList();
+    }
+
+    @Override
+    public void updateStatus(List<ParticipationRequestDto> requests) {
+        requestRepository.saveAll(requests.stream()
+                .map(RequestMapper::mapFromParticipationRequestDto)
+                .toList());
     }
 
     private UserDto getUserById(Long userId) {

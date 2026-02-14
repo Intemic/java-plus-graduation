@@ -2,7 +2,7 @@ package ru.practicum.request.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.practicum.request.utill.Status;
+import ru.practicum.core.interaction.api.enums.RequestStatus;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -33,7 +33,7 @@ public class Request {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private Status status;
+    private RequestStatus status;
 
     @PrePersist
     protected void onCreate() {

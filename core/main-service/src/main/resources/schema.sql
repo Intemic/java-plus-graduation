@@ -23,15 +23,6 @@ CREATE TABLE IF NOT EXISTS events(
     FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS requests(
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    created timestamp,
-    event_id BIGINT,
-    requester_id BIGINT,
-    status VARCHAR(20),
-    FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS compilations(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     title VARCHAR(50) UNIQUE,

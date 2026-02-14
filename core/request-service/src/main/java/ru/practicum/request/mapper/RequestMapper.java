@@ -1,10 +1,10 @@
 package ru.practicum.request.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.core.interaction.api.client.EventClient;
-import ru.practicum.request.dto.ParticipationRequestDto;
+import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
 import ru.practicum.request.model.Request;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -28,5 +28,16 @@ public class RequestMapper {
                 .requester(request.getRequesterId())
                 .status(request.getStatus())
                 .build();
+    }
+
+    public static Request mapFromParticipationRequestDto(ParticipationRequestDto requestDto) {
+        return Request.builder()
+                .id(requestDto.getId())
+                .created(LocalDateTime.parse(requestDto.getCreated(), FORMATTER))
+                .eventId(requestDto.getEvent())
+                .requesterId(requestDto.getRequester())
+                .status(requestDto.getStatus())
+                .build();
+
     }
 }

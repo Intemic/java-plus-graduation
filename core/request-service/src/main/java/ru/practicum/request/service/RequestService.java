@@ -1,7 +1,9 @@
 package ru.practicum.request.service;
 
-import ru.practicum.request.dto.ParticipationRequestDto;
+import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
+import ru.practicum.core.interaction.api.enums.RequestStatus;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,4 +36,14 @@ public interface RequestService {
      * @return отмененная заявка
      */
     ParticipationRequestDto cancelRequest(Long userId, Long requestId);
+
+    List<ParticipationRequestDto> findByEventId(Long eventId);
+
+    Long countByEventIdAndStatus(Long eventId, RequestStatus status);
+
+    List<ParticipationRequestDto> findByIdInAndEventId(Long eventId, List<Long> requestIds);
+
+    List<ParticipationRequestDto> findAllByEventIdInAndStatus(RequestStatus status, Collection<Long> eventIds);
+
+    void updateStatus(List<ParticipationRequestDto> requests);
 }

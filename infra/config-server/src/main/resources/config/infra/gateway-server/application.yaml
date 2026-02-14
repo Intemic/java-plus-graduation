@@ -19,7 +19,7 @@ spring:
         - id: users_route
           uri: lb://main-service
           predicates:
-            - Path=/users/*/events/**
+            - Path=/users/{userId}/events/**
         - id: events_route
           uri: lb://main-service
           predicates:
@@ -32,7 +32,7 @@ spring:
         - id: users_route
           uri: lb://main-service
           predicates:
-            - Path=/users/*/requests/**
+            - Path=/users/{userId}/requests/**
         # сервис пользователей
         - id: admin_users_route
           uri: lb://user-service

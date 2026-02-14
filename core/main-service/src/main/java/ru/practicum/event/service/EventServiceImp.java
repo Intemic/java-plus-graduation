@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.StatsClient;
 import ru.practicum.category.service.CategoryService;
+import ru.practicum.core.interaction.api.client.RequestClient;
 import ru.practicum.core.interaction.api.client.UserClient;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.mapper.EventMapper;
@@ -20,11 +21,8 @@ import ru.practicum.event.utill.State;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ConflictResource;
 import ru.practicum.exception.NotFoundResource;
-import ru.practicum.request.dto.ParticipationRequestDto;
-import ru.practicum.request.mapper.RequestMapper;
-import ru.practicum.request.model.Request;
-import ru.practicum.request.repository.RequestRepository;
-import ru.practicum.request.utill.Status;
+import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
+import ru.practicum.core.interaction.api.enums.RequestStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,13 +45,13 @@ public class EventServiceImp implements EventService {
     private final CategoryService categoryService;
     private final UserClient userService;
     private final EventRepository eventRepository;
-    private final RequestRepository requestRepository;
+    private final RequestClient requestRepository;
     private final StatsClient statsClient;
 
     public EventServiceImp(CategoryService categoryService,
                            UserClient userService,
                            EventRepository eventRepository,
-                           RequestRepository requestRepository,
+                           RequestClient requestRepository,
                            StatsClient statsClient) {
         this.categoryService = categoryService;
         this.userService = userService;
@@ -66,14 +64,14 @@ public class EventServiceImp implements EventService {
     public List<ParticipationRequestDto> getRequests(long userId, long eventId) {
         Event event = getEventByIdAndInitiatorId(eventId, userId);
         return requestRepository.findByEventId(event.getId()).stream()
-                .map(RequestMapper::mapToParticipationRequestDto)
+                //.map(RequestMapper::mapToParticipationRequestDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public EventFullDto get(long userId, long eventId) {
         Event event = getEventByIdAndInitiatorId(eventId, userId);
-        Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, Status.CONFIRMED);
+        Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         Long views = getViewsForEvent(event.getCreatedOn(), eventId);
         return EventMapper.toEventFullDto(event, confirmedRequests, views, userService);
     }
@@ -131,7 +129,7 @@ public class EventServiceImp implements EventService {
         }
 
         Event updatedEvent = eventRepository.save(event);
-        Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, Status.CONFIRMED);
+        Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         Long views = getViewsForEvent(event.getCreatedOn(), eventId);
         return EventMapper.toEventFullDto(updatedEvent, confirmedRequests, views, userService);
     }
@@ -146,34 +144,36 @@ public class EventServiceImp implements EventService {
             throw new ConflictResource("Подтверждение заявок не требуется для этого события");
         }
 
-        Long confirmedCount = requestRepository.countByEventIdAndStatus(eventId, Status.CONFIRMED);
+        Long confirmedCount = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
 
-        if (eventRequestStatus.getStatus() == Status.CONFIRMED &&
+        if (eventRequestStatus.getStatus() == RequestStatus.CONFIRMED &&
                 event.getParticipantLimit() > 0 && confirmedCount >= event.getParticipantLimit()) {
             throw new ConflictResource("Достигнут лимит участников");
         }
 
-        List<Request> requests = requestRepository.findByIdInAndEventId(eventRequestStatus.getRequestIds(), eventId);
+       // List<Request> requests = requestRepository.findByIdInAndEventId(eventRequestStatus.getRequestIds(), eventId);
+        List<ParticipationRequestDto> requests = requestRepository.findByIdInAndEventId(eventId, eventRequestStatus.getRequestIds());
         List<ParticipationRequestDto> confirmed = new ArrayList<>();
         List<ParticipationRequestDto> rejected = new ArrayList<>();
 
-        for (Request request : requests) {
-            if (request.getStatus() != Status.PENDING) {
+        for (ParticipationRequestDto request : requests) {
+            if (request.getStatus() != RequestStatus.PENDING) {
                 throw new ConflictResource("Можно изменить статус только заявок в состоянии ожидания");
             }
 
-            if (eventRequestStatus.getStatus() == Status.CONFIRMED &&
+            if (eventRequestStatus.getStatus() == RequestStatus.CONFIRMED &&
                     (event.getParticipantLimit() == 0 || confirmedCount < event.getParticipantLimit())) {
-                request.setStatus(Status.CONFIRMED);
-                confirmed.add(RequestMapper.mapToParticipationRequestDto(request));
+                request.setStatus(RequestStatus.CONFIRMED);
+                confirmed.add(request);
                 confirmedCount++;
             } else {
-                request.setStatus(Status.REJECTED);
-                rejected.add(RequestMapper.mapToParticipationRequestDto(request));
+                request.setStatus(RequestStatus.REJECTED);
+                rejected.add(request);
             }
         }
 
-        requestRepository.saveAll(requests);
+//        requestRepository.saveAll(requests);
+        requestRepository.updateStatus(requests);
 
         return EventRequestStatusUpdateResult.builder()
                 .confirmedRequests(confirmed)
@@ -391,9 +391,11 @@ public class EventServiceImp implements EventService {
         Map<Long, Event> eventMap = events.stream()
                 .collect(Collectors.toMap(Event::getId, Function.identity()));
 
-        Map<Long, Long> eventCountRequest = requestRepository.findAllByEventIdInAndStatus(eventMap.keySet(),
-                        Status.CONFIRMED).stream()
-                .collect(Collectors.groupingBy(request -> request.getEvent().getId(),
+//        Map<Long, Long> eventCountRequest = requestRepository.findAllByEventIdInAndStatus(eventMap.keySet(),
+//                        Status.CONFIRMED).stream()
+        Map<Long, Long> eventCountRequest = requestRepository
+                .findAllByEventIdInAndStatus(RequestStatus.CONFIRMED, eventMap.keySet()).stream()
+                .collect(Collectors.groupingBy(request -> request.getEvent(),
                         Collectors.counting()));
 
         List<String> listUrl = eventMap.keySet().stream()
