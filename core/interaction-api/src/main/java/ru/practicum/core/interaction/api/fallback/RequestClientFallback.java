@@ -1,44 +1,36 @@
-package ru.practicum.request.controller;
+package ru.practicum.core.interaction.api.fallback;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
 import ru.practicum.core.interaction.api.enums.RequestStatus;
 import ru.practicum.core.interaction.api.interface_.RequestOperation;
-import ru.practicum.request.service.RequestService;
 
 import java.util.Collection;
 import java.util.List;
 
-@RestController
-@RequestMapping("/inner/requests")
-@RequiredArgsConstructor
-public class RequestInnerController implements RequestOperation {
-    private final RequestService requestService;
-
+@Component
+public class RequestClientFallback implements RequestOperation {
     @Override
     public List<ParticipationRequestDto> findByEventId(Long eventId) {
-        return requestService.findByEventId(eventId);
+        return List.of();
     }
 
     @Override
     public Long countByEventIdAndStatus(Long eventId, RequestStatus status) {
-        return requestService.countByEventIdAndStatus(eventId, status);
+        return 0L;
     }
 
     @Override
     public List<ParticipationRequestDto> findByIdInAndEventId(Long eventId, List<Long> requestIds) {
-        return requestService.findByIdInAndEventId(eventId, requestIds);
+        return List.of();
     }
 
     @Override
     public List<ParticipationRequestDto> findAllByEventIdInAndStatus(RequestStatus status, Collection<Long> eventIds) {
-        return requestService.findAllByEventIdInAndStatus(status, eventIds);
+        return List.of();
     }
 
     @Override
     public void updateStatus(List<ParticipationRequestDto> requests) {
-        requestService.updateStatus(requests);
     }
 }

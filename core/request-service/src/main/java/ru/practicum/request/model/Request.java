@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * Сущность заявки на участие в событии.
  */
-@Builder
+@Builder(toBuilder = true)
 @Table(name = "requests")
 @Entity
 @Getter

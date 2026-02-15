@@ -30,6 +30,10 @@ spring:
     user-service:
       baseConfig: default
 
+feign:
+  okhttp:
+    enabled: true
+
 management:
   endpoints:
     web:

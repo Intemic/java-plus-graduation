@@ -3,7 +3,7 @@ package ru.practicum.event.model;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.practicum.category.model.Category;
-import ru.practicum.event.utill.State;
+import ru.practicum.core.interaction.api.enums.EventState;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -70,7 +70,7 @@ public class Event {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default
-    private State state = State.PENDING;
+    private EventState state = EventState.PENDING;
 
     @Transient
     @Builder.Default

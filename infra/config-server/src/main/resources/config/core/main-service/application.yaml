@@ -8,6 +8,8 @@ spring:
     openfeign:
       circuitbreaker:
         enabled: true
+      okhttp:
+        enabled: true
 
   datasource:
     driverClassName: "org.postgresql.Driver"
@@ -29,6 +31,13 @@ resilience4j.circuitbreaker:
   instances:
     user-service:
       baseConfig: default
+#
+#    request-service:
+#      baseConfig: default
+
+feign:
+  okhttp:
+    enabled: true
 
 management:
   endpoints:

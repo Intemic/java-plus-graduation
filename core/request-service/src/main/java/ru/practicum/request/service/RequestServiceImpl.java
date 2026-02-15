@@ -18,6 +18,9 @@ import ru.practicum.core.interaction.api.enums.RequestStatus;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Реализация сервиса для работы с заявками на участие в событиях.
@@ -117,10 +120,16 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public void updateStatus(List<ParticipationRequestDto> requests) {
-        requestRepository.saveAll(requests.stream()
-                .map(RequestMapper::mapFromParticipationRequestDto)
-                .toList());
+        Map<Long, ParticipationRequestDto> requestDtoMap = requests.stream()
+                .collect(Collectors.toMap(ParticipationRequestDto::getId, Function.identity()));
+        List<Request> requestsUpdate = requestRepository.findAllById(requestDtoMap.keySet()).stream()
+                .map(request ->
+                        request.toBuilder().status(requestDtoMap.get(request.getId()).getStatus()).build() )
+                .toList();
+
+       requestRepository.saveAll(requestsUpdate);
     }
 
     private UserDto getUserById(Long userId) {

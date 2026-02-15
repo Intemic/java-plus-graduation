@@ -27,5 +27,6 @@ public interface RequestOperation {
 
 
     @PatchMapping("/update-status")
-    void updateStatus(@RequestBody @NotNull List<ParticipationRequestDto> requests);
+    void updateStatus(@RequestBody List<ParticipationRequestDto> requests);
 }
+

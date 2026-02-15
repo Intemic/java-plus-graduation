@@ -1,5 +1,6 @@
 package ru.practicum.config;
 
+//import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
@@ -32,4 +33,9 @@ public class MainServiceConfig {
                                      RetryTemplate retryTemplate) {
         return new StatsClient(statsClientId, discoveryClient, retryTemplate);
     }
+
+//    @Bean
+//    public OkHttpClient client() {
+//        return new OkHttpClient();
+//    }
 }

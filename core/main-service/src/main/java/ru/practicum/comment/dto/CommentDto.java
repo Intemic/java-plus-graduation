@@ -1,7 +1,7 @@
 package ru.practicum.comment.dto;
 
 import lombok.*;
-import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.core.interaction.api.dto.event.EventShortDto;
 import ru.practicum.core.interaction.api.dto.user.UserDto;
 
 import java.time.LocalDateTime;

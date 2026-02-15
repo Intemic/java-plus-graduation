@@ -1,5 +1,7 @@
 package ru.practicum.event.service;
 
+import ru.practicum.core.interaction.api.dto.event.EventFullDto;
+import ru.practicum.core.interaction.api.dto.event.EventShortDto;
 import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.model.Event;
@@ -7,6 +9,7 @@ import ru.practicum.event.utill.EventGetAdminParam;
 import ru.practicum.event.utill.EventGetPublicParam;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Сервис для работы с событиями.
@@ -111,4 +114,6 @@ public interface EventService {
      * @return событие
      */
     Event getEventById(long eventId);
+
+    Optional<EventFullDto> findById(Long eventId);
 }

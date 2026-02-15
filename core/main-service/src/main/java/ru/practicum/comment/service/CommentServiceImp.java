@@ -15,8 +15,8 @@ import ru.practicum.comment.model.Comment;
 import ru.practicum.comment.repository.CommentRepository;
 import ru.practicum.comment.utill.CommentGetParam;
 import ru.practicum.core.interaction.api.client.UserClient;
+import ru.practicum.core.interaction.api.enums.EventState;
 import ru.practicum.event.service.EventService;
-import ru.practicum.event.utill.State;
 import ru.practicum.exception.ConflictResource;
 import ru.practicum.exception.ForbiddenResource;
 import ru.practicum.exception.NotFoundResource;
@@ -93,7 +93,7 @@ public class CommentServiceImp implements CommentService {
 
         comment.setEventObj(eventService.getEventById(comment.getEvent()));
 
-        if (!comment.getEventObj().getState().equals(State.PUBLISHED)) {
+        if (!comment.getEventObj().getState().equals(EventState.PUBLISHED)) {
             throw new ConflictResource("Комментировать можно только опубликованное событие");
         }
 

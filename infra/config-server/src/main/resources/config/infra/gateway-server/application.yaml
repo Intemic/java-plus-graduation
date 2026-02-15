@@ -1,6 +1,9 @@
 spring:
   cloud:
     gateway:
+      # для тестирования
+      httpclient:
+        connect-timeout: 1000
       discovery:
         locator:
           enabled: true
@@ -29,8 +32,8 @@ spring:
           predicates:
             - Path=/compilations/**
         # сервис запросов на участие
-        - id: users_route
-          uri: lb://main-service
+        - id: request_route
+          uri: lb://request-service
           predicates:
             - Path=/users/{userId}/requests/**
         # сервис пользователей

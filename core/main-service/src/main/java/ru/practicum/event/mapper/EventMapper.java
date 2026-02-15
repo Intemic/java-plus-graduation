@@ -1,16 +1,17 @@
 package ru.practicum.event.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.category.dto.CategoryDto;
+import ru.practicum.core.interaction.api.dto.category.CategoryDto;
 import ru.practicum.category.model.Category;
 import ru.practicum.core.interaction.api.client.UserClient;
+import ru.practicum.core.interaction.api.dto.event.EventFullDto;
+import ru.practicum.core.interaction.api.dto.event.EventShortDto;
+import ru.practicum.core.interaction.api.dto.event.LocationDto;
 import ru.practicum.core.interaction.api.dto.user.UserDto;
-import ru.practicum.event.dto.EventFullDto;
-import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.core.interaction.api.enums.EventState;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.utill.State;
 import ru.practicum.core.interaction.api.dto.user.UserShortDto;
 
 import java.time.LocalDateTime;
@@ -47,7 +48,7 @@ public class EventMapper {
                 .participantLimit(newEventDto.getParticipantLimit())
                 .requestModeration(newEventDto.isRequestModeration())
                 .createdOn(LocalDateTime.now())
-                .state(State.PENDING)
+                .state(EventState.PENDING)
                 .publishedOn(null)
                 .views(0L)
                 .confirmedRequests(0L)
@@ -72,7 +73,10 @@ public class EventMapper {
                 .description(event.getDescription())
                 .category(toCategoryDto(event.getCategory()))
                 .initiator(toUserShortDto(event.getInitiatorId(), userService))
-                .location(event.getLocation())
+                .location(LocationDto.builder()
+                        .lat(event.getLocation().getLat())
+                        .lon(event.getLocation().getLon())
+                        .build())
                 .paid(event.getPaid())
                 .participantLimit(event.getParticipantLimit())
                 .requestModeration(event.getRequestModeration())
@@ -128,7 +132,7 @@ public class EventMapper {
     /**
      * Преобразует сущность пользователя в DTO.
      *
-     * @param userId сущность пользователя
+     * @param userId     сущность пользователя
      * @param userClient сущность пользователя
      * @return DTO пользователя
      */
@@ -173,7 +177,10 @@ public class EventMapper {
                 .description(event.getDescription())
                 .category(toCategoryDto(event.getCategory()))
                 .initiator(toUserShortDto(event.getInitiatorId(), userService))
-                .location(event.getLocation())
+                .location(LocationDto.builder()
+                        .lat(event.getLocation().getLat())
+                        .lon(event.getLocation().getLon())
+                        .build())
                 .paid(event.getPaid())
                 .participantLimit(event.getParticipantLimit())
                 .requestModeration(event.getRequestModeration())
@@ -247,11 +254,11 @@ public class EventMapper {
         if (updateEvent.hasStateAction()) {
             switch (updateEvent.getStateAction()) {
                 case PUBLISH_EVENT:
-                    event.setState(State.PUBLISHED);
+                    event.setState(EventState.PUBLISHED);
                     event.setPublishedOn(LocalDateTime.now());
                     break;
                 case REJECT_EVENT:
-                    event.setState(State.CANCELED);
+                    event.setState(EventState.CANCELED);
             }
         }
 

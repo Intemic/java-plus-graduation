@@ -11,13 +11,15 @@ import ru.practicum.StatsClient;
 import ru.practicum.category.service.CategoryService;
 import ru.practicum.core.interaction.api.client.RequestClient;
 import ru.practicum.core.interaction.api.client.UserClient;
+import ru.practicum.core.interaction.api.dto.event.EventFullDto;
+import ru.practicum.core.interaction.api.dto.event.EventShortDto;
+import ru.practicum.core.interaction.api.enums.EventState;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.utill.EventGetAdminParam;
 import ru.practicum.event.utill.EventGetPublicParam;
-import ru.practicum.event.utill.State;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ConflictResource;
 import ru.practicum.exception.NotFoundResource;
@@ -106,7 +108,7 @@ public class EventServiceImp implements EventService {
     public EventFullDto update(long userId, long eventId, UpdateEventUserRequest updateEvent) {
         Event event = getEventByIdAndInitiatorId(eventId, userId);
 
-        if (event.getState() == State.PUBLISHED) {
+        if (event.getState() == EventState.PUBLISHED) {
             throw new ConflictResource("Нельзя редактировать опубликованное событие");
         }
 
@@ -120,10 +122,10 @@ public class EventServiceImp implements EventService {
         if (updateEvent.getStateAction() != null) {
             switch (updateEvent.getStateAction()) {
                 case SEND_TO_REVIEW:
-                    event.setState(State.PENDING);
+                    event.setState(EventState.PENDING);
                     break;
                 case CANCEL_REVIEW:
-                    event.setState(State.CANCELED);
+                    event.setState(EventState.CANCELED);
                     break;
             }
         }
@@ -301,7 +303,7 @@ public class EventServiceImp implements EventService {
         if (optionalEvent.isEmpty())
             throw new NotFoundResource("Событие с id %d не найдено".formatted(eventId));
         Event event = optionalEvent.get();
-        if (!event.getState().equals(State.PUBLISHED))
+        if (!event.getState().equals(EventState.PUBLISHED))
             throw new NotFoundResource("Событие с id %d не опубликовано".formatted(eventId));
 
         List<Event> eventList = List.of(event);
@@ -312,6 +314,11 @@ public class EventServiceImp implements EventService {
     public Event getEventById(long eventId) {
         return eventRepository.findById(eventId).orElseThrow(
                 () -> new NotFoundResource("Событие %d не найдено".formatted(eventId)));
+    }
+
+    @Override
+    public Optional<EventFullDto> findById(Long eventId) {
+        return eventRepository.findById(eventId).map(event -> EventMapper.mapToEventFullDto(event, userService));
     }
 
     private Event getEventByIdAndInitiatorId(long eventId, long userId) {
@@ -364,11 +371,11 @@ public class EventServiceImp implements EventService {
         if (updateEvent.hasStateAction()) {
             switch (updateEvent.getStateAction()) {
                 case PUBLISH_EVENT:
-                    if (!event.getState().equals(State.PENDING))
+                    if (!event.getState().equals(EventState.PENDING))
                         throw new ConflictResource("Событие можно публиковать только в статусе 'Ожидание'");
                     break;
                 case REJECT_EVENT:
-                    if (event.getState().equals(State.PUBLISHED))
+                    if (event.getState().equals(EventState.PUBLISHED))
                         throw new ConflictResource("Событие можно отклонить, только если оно еще не опубликовано");
                     break;
             }
