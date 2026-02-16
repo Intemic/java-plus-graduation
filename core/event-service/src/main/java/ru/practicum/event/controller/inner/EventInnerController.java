@@ -19,4 +19,9 @@ public class EventInnerController implements EventOperation {
     public Optional<EventFullDto> findById(Long eventId) {
         return eventService.findById(eventId);
     }
+
+    @Override
+    public boolean existsByCategoryId(Long eventId) {
+        return eventService.existsByCategoryId(eventId);
+    }
 }

@@ -9,9 +9,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.core.interaction.api.dto.event.EventFullDto;
 import ru.practicum.core.interaction.api.dto.event.EventShortDto;
-import ru.practicum.event.dto.*;
-import ru.practicum.event.service.EventService;
 import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
+import ru.practicum.event.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.event.dto.EventRequestStatusUpdateResult;
+import ru.practicum.event.dto.NewEventDto;
+import ru.practicum.event.dto.UpdateEventUserRequest;
+import ru.practicum.event.service.EventService;
 
 import java.util.List;
 

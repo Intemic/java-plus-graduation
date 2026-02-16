@@ -12,10 +12,9 @@ import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationRepository;
+import ru.practicum.core.interaction.api.client.EventClient;
 import ru.practicum.core.interaction.api.client.UserClient;
 import ru.practicum.core.interaction.api.dto.user.UserDto;
-import ru.practicum.event.model.Event;
-import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictResource;
 import ru.practicum.exception.NotFoundResource;
 
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
-    private final EventRepository eventRepository;
+    private final EventClient eventRepository;
     private final UserClient userRepository;
     private Map<Long, UserDto> userDtoMap = new HashMap<>();
 

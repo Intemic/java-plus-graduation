@@ -9,7 +9,7 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
-import ru.practicum.event.repository.EventRepository;
+import ru.practicum.core.interaction.api.client.EventClient;
 import ru.practicum.exception.ConflictResource;
 import ru.practicum.exception.NotFoundResource;
 
@@ -23,7 +23,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class CategoryServiceImp implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final EventRepository eventRepository;
+    private final EventClient eventRepository;
 
     @Override
     public List<CategoryDto> getAll(int from, int size) {

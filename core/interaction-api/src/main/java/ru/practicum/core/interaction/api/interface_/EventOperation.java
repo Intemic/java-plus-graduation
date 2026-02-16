@@ -10,4 +10,7 @@ import java.util.Optional;
 public interface EventOperation {
     @GetMapping("/{eventId}")
     Optional<EventFullDto> findById(@PathVariable @Positive Long eventId);
+
+    @GetMapping("/{eventId}/exist")
+    boolean existsByCategoryId(@PathVariable @Positive Long eventId);
 }

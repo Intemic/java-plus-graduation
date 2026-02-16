@@ -116,4 +116,6 @@ public interface EventService {
     Event getEventById(long eventId);
 
     Optional<EventFullDto> findById(Long eventId);
+
+    boolean existsByCategoryId(Long eventId);
 }

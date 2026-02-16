@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.event.model.Event;
 
 import java.time.LocalDateTime;
 
@@ -54,6 +53,6 @@ public class NewCommentDto {
      * Объект события, к которому относится комментарий.
      * Устанавливается автоматически сервисом, игнорируется при десериализации JSON.
      */
-    @JsonIgnore
-    private Event eventObj;
+//    @JsonIgnore
+//    private Event eventObj;
 }

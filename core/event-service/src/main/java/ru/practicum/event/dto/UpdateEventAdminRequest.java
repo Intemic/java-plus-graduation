@@ -1,12 +1,10 @@
 package ru.practicum.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import ru.practicum.category.model.Category;
 import ru.practicum.event.model.Location;
 import ru.practicum.event.utill.StateActionAdmin;
 
@@ -47,10 +45,6 @@ public class UpdateEventAdminRequest {
 
     @Size(min = 3, max = 120, message = "Заголовок события должен быть от 3 до 120 символов")
     private String title;
-
-    // для внутренного использования
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Category categoryObj;
 
     public boolean hasAnnotation() {
         return !(annotation == null || annotation.isBlank());

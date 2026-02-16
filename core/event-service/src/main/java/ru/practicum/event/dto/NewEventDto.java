@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import ru.practicum.category.model.Category;
 import ru.practicum.event.model.Location;
-//import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -54,12 +52,6 @@ public class NewEventDto {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long initiator;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Category categoryObject;
-
-//    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-//    private User initiatorObject;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Builder.Default

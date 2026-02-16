@@ -2,22 +2,19 @@ package ru.practicum.event.mapper;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.core.interaction.api.dto.category.CategoryDto;
-import ru.practicum.category.model.Category;
-import ru.practicum.core.interaction.api.client.UserClient;
 import ru.practicum.core.interaction.api.dto.event.EventFullDto;
 import ru.practicum.core.interaction.api.dto.event.EventShortDto;
 import ru.practicum.core.interaction.api.dto.event.LocationDto;
 import ru.practicum.core.interaction.api.dto.user.UserDto;
+import ru.practicum.core.interaction.api.dto.user.UserShortDto;
 import ru.practicum.core.interaction.api.enums.EventState;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
 import ru.practicum.event.model.Event;
-import ru.practicum.core.interaction.api.dto.user.UserShortDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Маппер для преобразования между сущностями и DTO событий.
@@ -41,7 +38,7 @@ public class EventMapper {
                 .title(newEventDto.getTitle())
                 .annotation(newEventDto.getAnnotation())
                 .description(newEventDto.getDescription())
-                .category(newEventDto.getCategoryObject())
+                .categoryId(newEventDto.getCategory())
                 .eventDate(newEventDto.getEventDate())
                 .initiatorId(newEventDto.getInitiator())
                 .location(newEventDto.getLocation())
@@ -63,7 +60,8 @@ public class EventMapper {
      * @return DTO события
      */
     public static EventFullDto mapToEventFullDto(Event event,
-                                                 Map<Long, UserDto> userDtoMap) {
+                                                 Map<Long, UserDto> userDtoMap,
+                                                 Map<Long, CategoryDto> categoryDtoMap) {
         if (event == null) {
             return null;
         }
@@ -73,7 +71,7 @@ public class EventMapper {
                 .title(event.getTitle())
                 .annotation(event.getAnnotation())
                 .description(event.getDescription())
-                .category(toCategoryDto(event.getCategory()))
+                .category(toCategoryDto(event.getCategoryId(), categoryDtoMap))
                 .initiator(toUserShortDto(event.getInitiatorId(), userDtoMap))
                 .location(LocationDto.builder()
                         .lat(event.getLocation().getLat())
@@ -98,7 +96,8 @@ public class EventMapper {
      * @return DTO краткого события
      */
     public static EventShortDto mapToEventShortDto(Event event,
-                                                   Map<Long, UserDto> userDtoMap) {
+                                                   Map<Long, UserDto> userDtoMap,
+                                                   Map<Long, CategoryDto> categoryDtoMap) {
         if (event == null) {
             return null;
         }
@@ -107,7 +106,7 @@ public class EventMapper {
                 .id(event.getId())
                 .title(event.getTitle())
                 .annotation(event.getAnnotation())
-                .category(toCategoryDto(event.getCategory()))
+                .category(toCategoryDto(event.getCategoryId(), categoryDtoMap))
                 .initiator(toUserShortDto(event.getInitiatorId(), userDtoMap))
                 .paid(event.getPaid())
                 .eventDate(formatDateTime(event.getEventDate()))
@@ -119,17 +118,19 @@ public class EventMapper {
     /**
      * Преобразует сущность категории в DTO.
      *
-     * @param category сущность категории
+     * @param categoryId сущность категории
+     * @param categoryDtoMap перечень категории
      * @return DTO категории
      */
-    public static CategoryDto toCategoryDto(Category category) {
-        if (category == null) {
+    public static CategoryDto toCategoryDto(Long categoryId, Map<Long, CategoryDto> categoryDtoMap) {
+        if (categoryDtoMap == null) {
             return null;
         }
-        return CategoryDto.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .build();
+
+        if (categoryDtoMap.containsKey(categoryId))
+            return categoryDtoMap.get(categoryId);
+
+        return null;
     }
 
     /**
@@ -167,7 +168,8 @@ public class EventMapper {
     public static EventFullDto toEventFullDto(Event event,
                                               Long confirmedRequests,
                                               Long views,
-                                              Map<Long, UserDto> userDtoMap) {
+                                              Map<Long, UserDto> userDtoMap,
+                                              Map<Long, CategoryDto> categoryDtoMap) {
         if (event == null) {
             return null;
         }
@@ -177,7 +179,7 @@ public class EventMapper {
                 .title(event.getTitle())
                 .annotation(event.getAnnotation())
                 .description(event.getDescription())
-                .category(toCategoryDto(event.getCategory()))
+                .category(toCategoryDto(event.getCategoryId(), categoryDtoMap))
                 .initiator(toUserShortDto(event.getInitiatorId(), userDtoMap))
                 .location(LocationDto.builder()
                         .lat(event.getLocation().getLat())
@@ -206,7 +208,8 @@ public class EventMapper {
     public static EventShortDto toEventShortDto(Event event,
                                                 Long confirmedRequests,
                                                 Long views,
-                                                Map<Long, UserDto> userDtoMap) {
+                                                Map<Long, UserDto> userDtoMap,
+                                                Map<Long, CategoryDto> categoryDtoMap) {
         if (event == null) {
             return null;
         }
@@ -215,7 +218,7 @@ public class EventMapper {
                 .id(event.getId())
                 .title(event.getTitle())
                 .annotation(event.getAnnotation())
-                .category(toCategoryDto(event.getCategory()))
+                .category(toCategoryDto(event.getCategoryId(), categoryDtoMap))
                 .initiator(toUserShortDto(event.getInitiatorId(), userDtoMap))
                 .paid(event.getPaid())
                 .eventDate(formatDateTime(event.getEventDate()))
@@ -236,7 +239,7 @@ public class EventMapper {
             event.setAnnotation(updateEvent.getAnnotation());
 
         if (updateEvent.hasCategory())
-            event.setCategory(updateEvent.getCategoryObj());
+            event.setCategoryId(updateEvent.getCategory());
 
         if (updateEvent.hasDescription())
             event.setDescription(updateEvent.getDescription());

@@ -2,7 +2,7 @@ package ru.practicum.event.validate;
 
 import jakarta.validation.ConstraintDeclarationException;
 import lombok.Getter;
-import ru.practicum.exception.ConflictResource;
+import ru.practicum.core.interaction.api.exception.ConflictResource;
 
 /**
  * Исключение для ошибок валидации даты события.

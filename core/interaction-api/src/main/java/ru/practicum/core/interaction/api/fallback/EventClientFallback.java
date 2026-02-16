@@ -12,4 +12,9 @@ public class EventClientFallback implements EventOperation {
     public Optional<EventFullDto> findById(Long eventId) {
         return Optional.empty();
     }
+
+    @Override
+    public boolean existsByCategoryId(Long eventId) {
+        return false;
+    }
 }

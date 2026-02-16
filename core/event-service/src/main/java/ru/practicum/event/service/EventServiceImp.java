@@ -8,24 +8,25 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.StatsClient;
-import ru.practicum.category.service.CategoryService;
+import ru.practicum.core.interaction.api.client.CategoryClient;
 import ru.practicum.core.interaction.api.client.RequestClient;
 import ru.practicum.core.interaction.api.client.UserClient;
+import ru.practicum.core.interaction.api.dto.category.CategoryDto;
 import ru.practicum.core.interaction.api.dto.event.EventFullDto;
 import ru.practicum.core.interaction.api.dto.event.EventShortDto;
+import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
 import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.core.interaction.api.enums.EventState;
+import ru.practicum.core.interaction.api.enums.RequestStatus;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.utill.EventGetAdminParam;
 import ru.practicum.event.utill.EventGetPublicParam;
-import ru.practicum.exception.BadRequestException;
-import ru.practicum.exception.ConflictResource;
-import ru.practicum.exception.NotFoundResource;
-import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
-import ru.practicum.core.interaction.api.enums.RequestStatus;
+import ru.practicum.core.interaction.api.exception.BadRequestException;
+import ru.practicum.core.interaction.api.exception.ConflictResource;
+import ru.practicum.core.interaction.api.exception.NotFoundResource;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,14 +43,15 @@ import static ru.practicum.event.specification.EventSpecification.*;
 @Transactional(readOnly = true)
 public class EventServiceImp implements EventService {
     private static final String EVENT_URI_PATTERN = "/events/%d";
-    private final CategoryService categoryService;
+    private final CategoryClient categoryService;
     private final UserClient userService;
     private final EventRepository eventRepository;
     private final RequestClient requestRepository;
     private final StatsClient statsClient;
     private Map<Long, UserDto> userDtoMap = new HashMap<>();
+    private Map<Long, CategoryDto> categoryDtoMap = new HashMap<>();
 
-    public EventServiceImp(CategoryService categoryService,
+    public EventServiceImp(CategoryClient categoryService,
                            UserClient userService,
                            EventRepository eventRepository,
                            RequestClient requestRepository,
@@ -74,7 +76,11 @@ public class EventServiceImp implements EventService {
         Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         Long views = getViewsForEvent(event.getCreatedOn(), eventId);
         return EventMapper
-                .toEventFullDto(event, confirmedRequests, views, getUserDtoMap(List.of(event.getInitiatorId())));
+                .toEventFullDto(event,
+                        confirmedRequests,
+                        views,
+                        getUserDtoMap(List.of(event.getInitiatorId())),
+                        getCategoryDtoMap(List.of(event.getCategoryId())));
     }
 
     @Override
@@ -85,8 +91,13 @@ public class EventServiceImp implements EventService {
                 .map(Event::getInitiatorId)
                 .toList();
         userDtoMap = getUserDtoMap(initiatorIds);
+        List<Long> categoryIds = events.stream()
+                .map(Event::getCategoryId)
+                .toList();
+        categoryDtoMap = getCategoryDtoMap(categoryIds);
+
         return updateEventFieldStats(events).stream()
-                .map(event -> EventMapper.mapToEventShortDto(event, userDtoMap))
+                .map(event -> EventMapper.mapToEventShortDto(event, userDtoMap, categoryDtoMap))
                 .toList();
     }
 
@@ -97,14 +108,14 @@ public class EventServiceImp implements EventService {
             throw new BadRequestException("Дата должна быть не ранее текущей + 2 часа");
         }
 
-        eventDto.setCategoryObject(categoryService.getCategoryById(eventDto.getCategory()));
         eventDto.setInitiator(userId);
         Event event = EventMapper.mapFromNewEventDto(eventDto);
         Event savedEvent = eventRepository.save(event);
         return EventMapper.toEventFullDto(savedEvent,
                 0L,
                 0L,
-                getUserDtoMap(List.of(savedEvent.getInitiatorId())));
+                getUserDtoMap(List.of(savedEvent.getInitiatorId())),
+                getCategoryDtoMap(List.of(savedEvent.getCategoryId())));
     }
 
     @Override
@@ -140,7 +151,8 @@ public class EventServiceImp implements EventService {
         return EventMapper.toEventFullDto(updatedEvent,
                 confirmedRequests,
                 views,
-                getUserDtoMap(List.of(updatedEvent.getInitiatorId())));
+                getUserDtoMap(List.of(updatedEvent.getInitiatorId())),
+                getCategoryDtoMap(List.of(updatedEvent.getCategoryId())));
     }
 
     @Override
@@ -214,8 +226,13 @@ public class EventServiceImp implements EventService {
                 .map(Event::getInitiatorId)
                 .toList();
         userDtoMap = getUserDtoMap(initiatorIds);
+        List<Long> categoryIds = events.stream()
+                .map(Event::getCategoryId)
+                .toList();
+        categoryDtoMap = getCategoryDtoMap(categoryIds);
+
         return updateEventFieldStats(events).stream()
-                .map(event -> EventMapper.mapToEventFullDto(event, userDtoMap))
+                .map(event -> EventMapper.mapToEventFullDto(event, userDtoMap, categoryDtoMap))
                 .toList();
     }
 
@@ -227,13 +244,10 @@ public class EventServiceImp implements EventService {
 
         checkUpdateEventAdmin(event, updateEventAdminRequest);
 
-        if (updateEventAdminRequest.getCategory() != null) {
-            updateEventAdminRequest.setCategoryObj(categoryService.getCategoryById(updateEventAdminRequest.getCategory()));
-        }
-
         EventMapper.updateEventFromAdminRequest(event, updateEventAdminRequest);
         return EventMapper.mapToEventFullDto(eventRepository.save(event),
-                getUserDtoMap(List.of(event.getInitiatorId())));
+                getUserDtoMap(List.of(event.getInitiatorId())),
+                getCategoryDtoMap(List.of(event.getCategoryId())));
     }
 
     @Override
@@ -303,12 +317,17 @@ public class EventServiceImp implements EventService {
                 .toList();
         userDtoMap = getUserDtoMap(initiatorIds);
 
+        List<Long> categoryIds = events.stream()
+                .map(Event::getCategoryId)
+                .toList();
+        categoryDtoMap = getCategoryDtoMap(categoryIds);
+
         return eventMap.values().stream()
                 .map(event -> {
                     Long views = statsCount.getOrDefault(EVENT_URI_PATTERN.formatted(event.getId()), 0L);
                     return EventMapper.mapToEventShortDto(event.toBuilder()
                             .views(views)
-                            .build(), userDtoMap);
+                            .build(), userDtoMap, categoryDtoMap);
                 }).toList();
     }
 
@@ -324,7 +343,8 @@ public class EventServiceImp implements EventService {
 
         List<Event> eventList = List.of(event);
         return EventMapper.mapToEventFullDto(updateEventFieldStats(eventList).getFirst(),
-                getUserDtoMap(List.of(event.getInitiatorId())));
+                getUserDtoMap(List.of(event.getInitiatorId())),
+                getCategoryDtoMap(List.of(event.getCategoryId())));
     }
 
     @Override
@@ -339,10 +359,16 @@ public class EventServiceImp implements EventService {
         if (eventOptional.isPresent()) {
             Event event = eventOptional.get();
             return Optional.of(EventMapper.mapToEventFullDto(event,
-                            getUserDtoMap(List.of(event.getInitiatorId()))));
+                    getUserDtoMap(List.of(event.getInitiatorId())),
+                    getCategoryDtoMap(List.of(event.getCategoryId()))));
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public boolean existsByCategoryId(Long eventId) {
+        return eventRepository.existsByCategoryId(eventId);
     }
 
     private Event getEventByIdAndInitiatorId(long eventId, long userId) {
@@ -355,7 +381,7 @@ public class EventServiceImp implements EventService {
             event.setAnnotation(updateEvent.getAnnotation());
         }
         if (updateEvent.getCategory() != null) {
-            event.setCategory(categoryService.getCategoryById(updateEvent.getCategory()));
+            event.setCategoryId(updateEvent.getCategory());
         }
         if (updateEvent.getDescription() != null) {
             event.setDescription(updateEvent.getDescription());
@@ -456,5 +482,10 @@ public class EventServiceImp implements EventService {
     private Map<Long, UserDto> getUserDtoMap(List<Long> ids) {
         return userService.findAllByIdIn(ids).stream()
                 .collect(Collectors.toMap(UserDto::getId, Function.identity()));
+    }
+
+    private Map<Long, CategoryDto> getCategoryDtoMap(List<Long> ids) {
+        return categoryService.findAllByIdIn(ids).stream()
+                .collect(Collectors.toMap(CategoryDto::getId, Function.identity()));
     }
 }
