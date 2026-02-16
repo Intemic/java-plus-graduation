@@ -49,4 +49,6 @@ public interface UserService {
     Optional<ru.practicum.core.interaction.api.dto.user.UserDto> findById(Long userId);
 
     boolean existsById(Long userId);
+
+    List<UserDto> findAllByIdIn(List<Long> ids);
 }

@@ -16,6 +16,7 @@ import ru.practicum.core.interaction.api.dto.user.UserShortDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -61,7 +62,8 @@ public class EventMapper {
      * @param event сущность события
      * @return DTO события
      */
-    public static EventFullDto mapToEventFullDto(Event event, UserClient userService) {
+    public static EventFullDto mapToEventFullDto(Event event,
+                                                 Map<Long, UserDto> userDtoMap) {
         if (event == null) {
             return null;
         }
@@ -72,7 +74,7 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .description(event.getDescription())
                 .category(toCategoryDto(event.getCategory()))
-                .initiator(toUserShortDto(event.getInitiatorId(), userService))
+                .initiator(toUserShortDto(event.getInitiatorId(), userDtoMap))
                 .location(LocationDto.builder()
                         .lat(event.getLocation().getLat())
                         .lon(event.getLocation().getLon())
@@ -95,7 +97,8 @@ public class EventMapper {
      * @param event сущность события
      * @return DTO краткого события
      */
-    public static EventShortDto mapToEventShortDto(Event event, UserClient userService) {
+    public static EventShortDto mapToEventShortDto(Event event,
+                                                   Map<Long, UserDto> userDtoMap) {
         if (event == null) {
             return null;
         }
@@ -105,7 +108,7 @@ public class EventMapper {
                 .title(event.getTitle())
                 .annotation(event.getAnnotation())
                 .category(toCategoryDto(event.getCategory()))
-                .initiator(toUserShortDto(event.getInitiatorId(), userService))
+                .initiator(toUserShortDto(event.getInitiatorId(), userDtoMap))
                 .paid(event.getPaid())
                 .eventDate(formatDateTime(event.getEventDate()))
                 .confirmedRequests(event.getConfirmedRequests())
@@ -133,19 +136,15 @@ public class EventMapper {
      * Преобразует сущность пользователя в DTO.
      *
      * @param userId     сущность пользователя
-     * @param userClient сущность пользователя
+     * @param userDtoMap сущность пользователя
      * @return DTO пользователя
      */
-    public static UserShortDto toUserShortDto(long userId, UserClient userClient) {
-        if (userClient == null || userId == 0) {
+    public static UserShortDto toUserShortDto(long userId, Map<Long, UserDto> userDtoMap) {
+        if (userDtoMap == null || userId == 0) {
             return null;
         }
 
-        Optional<UserDto> userDtoOptional = userClient.findById(userId);
-
-        UserDto userDto = null;
-        if (userDtoOptional.isPresent())
-            userDto = userDtoOptional.get();
+        UserDto userDto = userDtoMap.get(userId);
 
         return UserShortDto.builder()
                 .id(userId)
@@ -165,7 +164,10 @@ public class EventMapper {
      * @param views             количество просмотров
      * @return DTO события
      */
-    public static EventFullDto toEventFullDto(Event event, Long confirmedRequests, Long views, UserClient userService) {
+    public static EventFullDto toEventFullDto(Event event,
+                                              Long confirmedRequests,
+                                              Long views,
+                                              Map<Long, UserDto> userDtoMap) {
         if (event == null) {
             return null;
         }
@@ -176,7 +178,7 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .description(event.getDescription())
                 .category(toCategoryDto(event.getCategory()))
-                .initiator(toUserShortDto(event.getInitiatorId(), userService))
+                .initiator(toUserShortDto(event.getInitiatorId(), userDtoMap))
                 .location(LocationDto.builder()
                         .lat(event.getLocation().getLat())
                         .lon(event.getLocation().getLon())
@@ -201,7 +203,10 @@ public class EventMapper {
      * @param views             количество просмотров
      * @return DTO краткого события
      */
-    public static EventShortDto toEventShortDto(Event event, Long confirmedRequests, Long views, UserClient userService) {
+    public static EventShortDto toEventShortDto(Event event,
+                                                Long confirmedRequests,
+                                                Long views,
+                                                Map<Long, UserDto> userDtoMap) {
         if (event == null) {
             return null;
         }
@@ -211,7 +216,7 @@ public class EventMapper {
                 .title(event.getTitle())
                 .annotation(event.getAnnotation())
                 .category(toCategoryDto(event.getCategory()))
-                .initiator(toUserShortDto(event.getInitiatorId(), userService))
+                .initiator(toUserShortDto(event.getInitiatorId(), userDtoMap))
                 .paid(event.getPaid())
                 .eventDate(formatDateTime(event.getEventDate()))
                 .confirmedRequests(confirmedRequests != null ? confirmedRequests : 0L)

@@ -15,13 +15,19 @@ import ru.practicum.comment.model.Comment;
 import ru.practicum.comment.repository.CommentRepository;
 import ru.practicum.comment.utill.CommentGetParam;
 import ru.practicum.core.interaction.api.client.UserClient;
+import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.core.interaction.api.enums.EventState;
+import ru.practicum.event.model.Event;
 import ru.practicum.event.service.EventService;
 import ru.practicum.exception.ConflictResource;
 import ru.practicum.exception.ForbiddenResource;
 import ru.practicum.exception.NotFoundResource;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Реализация сервиса для управления комментариями к событиям.
@@ -34,6 +40,7 @@ public class CommentServiceImp implements CommentService {
     private final CommentRepository commentRepository;
     private final UserClient userService;
     private final EventService eventService;
+    private Map<Long, UserDto> userDtoMap = new HashMap<>();
 
     /**
      * Получает комментарий по идентификаторам пользователя и комментария.
@@ -57,7 +64,7 @@ public class CommentServiceImp implements CommentService {
             throw new ForbiddenResource("Просмотр комментария другого автора невозможен");
         }
 
-        return CommentMapper.mapFromComment(comment, userService);
+        return CommentMapper.mapFromComment(comment, getUserDtoMap(List.of(comment.getEvent().getInitiatorId())));
     }
 
     /**
@@ -70,8 +77,14 @@ public class CommentServiceImp implements CommentService {
     public List<CommentDto> getAll(long userId) {
         userService.findById(userId);
 
-        return commentRepository.findAllByAuthorId(userId).stream()
-                .map(comment ->  CommentMapper.mapFromComment(comment, userService))
+        List<Comment> comments = commentRepository.findAllByAuthorId(userId);
+        List<Long> initiatorIds = comments.stream()
+                .map( comment -> comment.getEvent().getInitiatorId())
+                .toList();
+        userDtoMap = getUserDtoMap(initiatorIds);
+
+        return comments.stream()
+                .map(comment ->  CommentMapper.mapFromComment(comment, userDtoMap))
                 .toList();
     }
 
@@ -100,7 +113,7 @@ public class CommentServiceImp implements CommentService {
         Comment newComment = CommentMapper.mapFromNewDto(comment);
         Comment savedComment = commentRepository.save(newComment);
 
-        return CommentMapper.mapFromComment(savedComment, userService);
+        return CommentMapper.mapFromComment(savedComment, getUserDtoMap(List.of(savedComment.getAuthorId())));
     }
 
     /**
@@ -128,7 +141,7 @@ public class CommentServiceImp implements CommentService {
         existingComment.setText(comment.getText());
         Comment updatedComment = commentRepository.save(existingComment);
 
-        return CommentMapper.mapFromComment(updatedComment, userService);
+        return CommentMapper.mapFromComment(updatedComment, getUserDtoMap(List.of(updatedComment.getAuthorId())));
     }
 
     /**
@@ -188,8 +201,19 @@ public class CommentServiceImp implements CommentService {
         if (param.getAuthorIds() != null)
             specification = specification.and(CommentRepository.byAuthor(param.getAuthorIds()));
 
-        return commentRepository.findAll(specification, pageable).stream()
-                .map(comment ->  CommentMapper.mapFromComment(comment, userService))
+        List<Comment> comments = commentRepository.findAll(specification, pageable).stream().toList();
+        List<Long> initiatorIds = comments.stream()
+                .map( comment -> comment.getEvent().getInitiatorId())
                 .toList();
+        userDtoMap = getUserDtoMap(initiatorIds);
+
+        return comments.stream()
+                .map(comment ->  CommentMapper.mapFromComment(comment, userDtoMap))
+                .toList();
+    }
+
+    private Map<Long, UserDto> getUserDtoMap(List<Long> ids) {
+        return userService.findAllByIdIn(ids).stream()
+                .collect(Collectors.toMap(UserDto::getId, Function.identity()));
     }
 }

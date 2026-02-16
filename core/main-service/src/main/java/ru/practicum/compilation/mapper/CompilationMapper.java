@@ -5,8 +5,10 @@ import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.core.interaction.api.client.UserClient;
+import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.event.mapper.EventMapper;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -21,7 +23,8 @@ public class CompilationMapper {
      * @param compilation сущность подборки
      * @return DTO подборки
      */
-    public static CompilationDto toDto(Compilation compilation, UserClient userRepository) {
+    public static CompilationDto toDto(Compilation compilation,
+                                       Map<Long, UserDto> userDtoMap) {
         if (compilation == null) {
             return null;
         }
@@ -32,7 +35,7 @@ public class CompilationMapper {
                 .pinned(compilation.getPinned())
                 .events(compilation.getEvents() != null ?
                         compilation.getEvents().stream()
-                                .map(event ->  EventMapper.mapToEventShortDto(event, userRepository))
+                                .map(event ->  EventMapper.mapToEventShortDto(event, userDtoMap))
                                 .collect(Collectors.toList()) :
                         java.util.Collections.emptyList())
                 .build();

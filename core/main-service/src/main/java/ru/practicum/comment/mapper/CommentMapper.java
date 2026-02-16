@@ -8,6 +8,7 @@ import ru.practicum.core.interaction.api.client.UserClient;
 import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.event.mapper.EventMapper;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -44,27 +45,30 @@ public class CommentMapper {
      * @return DTO комментария для возврата в API
      * @throws IllegalArgumentException если comment равен null
      */
-    public static CommentDto mapFromComment(Comment comment, UserClient userRepository) {
+    public static CommentDto mapFromComment(Comment comment,
+                                            Map<Long, UserDto> userDtoMap) {
         if (comment == null) {
             throw new IllegalArgumentException("Comment не может быть null");
         }
 
         return CommentDto.builder()
                 .id(comment.getId())
-                .author(toUserDto(comment.getAuthorId(), userRepository))
-                .event(EventMapper.mapToEventShortDto(comment.getEvent(), userRepository))
+                .author(toUserDto(comment.getAuthorId(), userDtoMap))
+                .event(EventMapper.mapToEventShortDto(comment.getEvent(), userDtoMap))
                 .created(comment.getCreated())
                 .text(comment.getText())
                 .build();
     }
 
-    public static UserDto toUserDto(long userId, UserClient userClient) {
-        if (userClient == null || userId == 0) {
+    public static UserDto toUserDto(long userId, Map<Long, UserDto> userDtoMap) {
+        if (userDtoMap == null || userId == 0) {
             return null;
         }
 
-        Optional<UserDto> userDtoOptional = userClient.findById(userId);
-        return userDtoOptional.orElse(null);
+        UserDto userDto = null;
+        if (userDtoMap.containsKey(userId))
+            userDto = userDtoMap.get(userId);
 
+        return userDto;
     }
 }

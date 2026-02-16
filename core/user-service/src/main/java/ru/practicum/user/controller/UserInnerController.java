@@ -7,6 +7,7 @@ import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.core.interaction.api.interface_.UserOperation;
 import ru.practicum.user.service.UserService;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -18,6 +19,11 @@ public class UserInnerController implements UserOperation {
     @Override
     public Optional<UserDto> findById(Long userId) {
         return userService.findById(userId);
+    }
+
+    @Override
+    public List<UserDto> findAllByIdIn(List<Long> ids) {
+        return userService.findAllByIdIn(ids);
     }
 
     @Override

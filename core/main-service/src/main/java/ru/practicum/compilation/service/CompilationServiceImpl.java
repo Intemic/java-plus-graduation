@@ -13,14 +13,14 @@ import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.core.interaction.api.client.UserClient;
+import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictResource;
 import ru.practicum.exception.NotFoundResource;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -35,6 +35,7 @@ public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
     private final UserClient userRepository;
+    private Map<Long, UserDto> userDtoMap = new HashMap<>();
 
     @Override
     @Transactional
@@ -57,7 +58,7 @@ public class CompilationServiceImpl implements CompilationService {
         try {
             Compilation savedCompilation = compilationRepository.save(compilation);
             log.info("Compilation created successfully with id: {}", savedCompilation.getId());
-            return CompilationMapper.toDto(savedCompilation, userRepository);
+            return CompilationMapper.toDto(savedCompilation, getUserDtoMap(savedCompilation));
         } catch (DataIntegrityViolationException e) {
             throw new ConflictResource("Compilation creation failed due to data integrity violation");
         }
@@ -103,7 +104,7 @@ public class CompilationServiceImpl implements CompilationService {
         try {
             Compilation updatedCompilation = compilationRepository.save(compilation);
             log.info("Compilation with id: {} updated successfully", compId);
-            return CompilationMapper.toDto(updatedCompilation, userRepository);
+            return CompilationMapper.toDto(updatedCompilation, getUserDtoMap(updatedCompilation));
         } catch (DataIntegrityViolationException e) {
             throw new ConflictResource("Compilation update failed due to data integrity violation");
         }
@@ -120,8 +121,18 @@ public class CompilationServiceImpl implements CompilationService {
             compilations = compilationRepository.findAll(pageable).getContent();
         }
 
+        List<Event> eventsList = compilations.stream()
+                .flatMap(compilation -> compilation.getEvents().stream())
+                .collect(Collectors.toList());
+
+        List<Long> initiatorIds = eventsList.stream()
+                .map(Event::getInitiatorId)
+                .toList();
+        userDtoMap = userRepository.findAllByIdIn(initiatorIds).stream()
+                .collect(Collectors.toMap(UserDto::getId, Function.identity()));
+
         return compilations.stream()
-                .map(compilation ->  CompilationMapper.toDto(compilation, userRepository))
+                .map(compilation ->  CompilationMapper.toDto(compilation, userDtoMap))
                 .collect(Collectors.toList());
     }
 
@@ -132,6 +143,18 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundResource("Compilation with id=" + compId + " was not found"));
 
-        return CompilationMapper.toDto(compilation, userRepository);
+        return CompilationMapper.toDto(compilation, getUserDtoMap(compilation));
+    }
+
+    private Map<Long, UserDto> getUserDtoMap(Compilation compilation) {
+        List<Long> initiatorIds = compilation.getEvents().stream()
+                .map(Event::getInitiatorId)
+                .toList();
+
+        if (initiatorIds.isEmpty())
+            return Map.of();
+
+        return userRepository.findAllByIdIn(initiatorIds).stream()
+                .collect(Collectors.toMap(UserDto::getId, Function.identity()));
     }
 }

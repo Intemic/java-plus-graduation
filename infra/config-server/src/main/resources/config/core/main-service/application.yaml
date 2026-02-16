@@ -8,6 +8,7 @@ spring:
     openfeign:
       circuitbreaker:
         enabled: true
+# нужно подключить библиотеку okhttp для того чтобы заработал метод PATCH для feign клиента
       okhttp:
         enabled: true
 
@@ -31,13 +32,10 @@ resilience4j.circuitbreaker:
   instances:
     user-service:
       baseConfig: default
-#
-#    request-service:
-#      baseConfig: default
 
-feign:
-  okhttp:
-    enabled: true
+    request-service:
+      baseConfig: default
+
 
 management:
   endpoints:

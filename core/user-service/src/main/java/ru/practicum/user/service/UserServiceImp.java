@@ -112,4 +112,11 @@ public class UserServiceImp implements UserService {
     public boolean existsById(Long userId) {
         return userRepository.existsById(userId);
     }
+
+    @Override
+    public List<UserDto> findAllByIdIn(List<Long> ids) {
+        return userRepository.findAllByIdIn(ids).stream()
+                .map(UserMapper::mapToDto)
+                .toList();
+    }
 }

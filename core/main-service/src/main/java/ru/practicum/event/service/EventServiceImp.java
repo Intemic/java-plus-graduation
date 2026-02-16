@@ -13,6 +13,7 @@ import ru.practicum.core.interaction.api.client.RequestClient;
 import ru.practicum.core.interaction.api.client.UserClient;
 import ru.practicum.core.interaction.api.dto.event.EventFullDto;
 import ru.practicum.core.interaction.api.dto.event.EventShortDto;
+import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.core.interaction.api.enums.EventState;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.mapper.EventMapper;
@@ -27,10 +28,7 @@ import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
 import ru.practicum.core.interaction.api.enums.RequestStatus;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -49,6 +47,7 @@ public class EventServiceImp implements EventService {
     private final EventRepository eventRepository;
     private final RequestClient requestRepository;
     private final StatsClient statsClient;
+    private Map<Long, UserDto> userDtoMap = new HashMap<>();
 
     public EventServiceImp(CategoryService categoryService,
                            UserClient userService,
@@ -66,7 +65,6 @@ public class EventServiceImp implements EventService {
     public List<ParticipationRequestDto> getRequests(long userId, long eventId) {
         Event event = getEventByIdAndInitiatorId(eventId, userId);
         return requestRepository.findByEventId(event.getId()).stream()
-                //.map(RequestMapper::mapToParticipationRequestDto)
                 .collect(Collectors.toList());
     }
 
@@ -75,15 +73,20 @@ public class EventServiceImp implements EventService {
         Event event = getEventByIdAndInitiatorId(eventId, userId);
         Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         Long views = getViewsForEvent(event.getCreatedOn(), eventId);
-        return EventMapper.toEventFullDto(event, confirmedRequests, views, userService);
+        return EventMapper
+                .toEventFullDto(event, confirmedRequests, views, getUserDtoMap(List.of(event.getInitiatorId())));
     }
 
     @Override
     public List<EventShortDto> getAll(long userId, int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
         List<Event> events = eventRepository.findByInitiatorId(userId, pageable).stream().toList();
+        List<Long> initiatorIds = events.stream()
+                .map(Event::getInitiatorId)
+                .toList();
+        userDtoMap = getUserDtoMap(initiatorIds);
         return updateEventFieldStats(events).stream()
-                .map(event ->  EventMapper.mapToEventShortDto(event, userService))
+                .map(event -> EventMapper.mapToEventShortDto(event, userDtoMap))
                 .toList();
     }
 
@@ -96,11 +99,12 @@ public class EventServiceImp implements EventService {
 
         eventDto.setCategoryObject(categoryService.getCategoryById(eventDto.getCategory()));
         eventDto.setInitiator(userId);
-        //eventDto.setInitiatorObject(userService.getUserById(userId));
-
         Event event = EventMapper.mapFromNewEventDto(eventDto);
         Event savedEvent = eventRepository.save(event);
-        return EventMapper.toEventFullDto(savedEvent, 0L, 0L, userService);
+        return EventMapper.toEventFullDto(savedEvent,
+                0L,
+                0L,
+                getUserDtoMap(List.of(savedEvent.getInitiatorId())));
     }
 
     @Override
@@ -133,7 +137,10 @@ public class EventServiceImp implements EventService {
         Event updatedEvent = eventRepository.save(event);
         Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
         Long views = getViewsForEvent(event.getCreatedOn(), eventId);
-        return EventMapper.toEventFullDto(updatedEvent, confirmedRequests, views, userService);
+        return EventMapper.toEventFullDto(updatedEvent,
+                confirmedRequests,
+                views,
+                getUserDtoMap(List.of(updatedEvent.getInitiatorId())));
     }
 
     @Override
@@ -153,7 +160,7 @@ public class EventServiceImp implements EventService {
             throw new ConflictResource("Достигнут лимит участников");
         }
 
-       // List<Request> requests = requestRepository.findByIdInAndEventId(eventRequestStatus.getRequestIds(), eventId);
+        // List<Request> requests = requestRepository.findByIdInAndEventId(eventRequestStatus.getRequestIds(), eventId);
         List<ParticipationRequestDto> requests = requestRepository.findByIdInAndEventId(eventId, eventRequestStatus.getRequestIds());
         List<ParticipationRequestDto> confirmed = new ArrayList<>();
         List<ParticipationRequestDto> rejected = new ArrayList<>();
@@ -174,7 +181,6 @@ public class EventServiceImp implements EventService {
             }
         }
 
-//        requestRepository.saveAll(requests);
         requestRepository.updateStatus(requests);
 
         return EventRequestStatusUpdateResult.builder()
@@ -204,8 +210,12 @@ public class EventServiceImp implements EventService {
             specification = specification.and(byRangeEnd(param.getRangeEnd()));
 
         List<Event> events = eventRepository.findAll(specification, pageable).stream().toList();
+        List<Long> initiatorIds = events.stream()
+                .map(Event::getInitiatorId)
+                .toList();
+        userDtoMap = getUserDtoMap(initiatorIds);
         return updateEventFieldStats(events).stream()
-                .map(event ->  EventMapper.mapToEventFullDto(event, userService))
+                .map(event -> EventMapper.mapToEventFullDto(event, userDtoMap))
                 .toList();
     }
 
@@ -222,7 +232,8 @@ public class EventServiceImp implements EventService {
         }
 
         EventMapper.updateEventFromAdminRequest(event, updateEventAdminRequest);
-        return EventMapper.mapToEventFullDto(eventRepository.save(event), userService);
+        return EventMapper.mapToEventFullDto(eventRepository.save(event),
+                getUserDtoMap(List.of(event.getInitiatorId())));
     }
 
     @Override
@@ -287,12 +298,17 @@ public class EventServiceImp implements EventService {
                 .stream()
                 .collect(Collectors.toMap(ViewStatsDto::getUri, ViewStatsDto::getHits));
 
+        List<Long> initiatorIds = events.stream()
+                .map(Event::getInitiatorId)
+                .toList();
+        userDtoMap = getUserDtoMap(initiatorIds);
+
         return eventMap.values().stream()
                 .map(event -> {
                     Long views = statsCount.getOrDefault(EVENT_URI_PATTERN.formatted(event.getId()), 0L);
                     return EventMapper.mapToEventShortDto(event.toBuilder()
                             .views(views)
-                            .build(), userService);
+                            .build(), userDtoMap);
                 }).toList();
     }
 
@@ -307,7 +323,8 @@ public class EventServiceImp implements EventService {
             throw new NotFoundResource("Событие с id %d не опубликовано".formatted(eventId));
 
         List<Event> eventList = List.of(event);
-        return EventMapper.mapToEventFullDto(updateEventFieldStats(eventList).getFirst(), userService);
+        return EventMapper.mapToEventFullDto(updateEventFieldStats(eventList).getFirst(),
+                getUserDtoMap(List.of(event.getInitiatorId())));
     }
 
     @Override
@@ -318,7 +335,14 @@ public class EventServiceImp implements EventService {
 
     @Override
     public Optional<EventFullDto> findById(Long eventId) {
-        return eventRepository.findById(eventId).map(event -> EventMapper.mapToEventFullDto(event, userService));
+        Optional<Event> eventOptional = eventRepository.findById(eventId);
+        if (eventOptional.isPresent()) {
+            Event event = eventOptional.get();
+            return Optional.of(EventMapper.mapToEventFullDto(event,
+                            getUserDtoMap(List.of(event.getInitiatorId()))));
+        }
+
+        return Optional.empty();
     }
 
     private Event getEventByIdAndInitiatorId(long eventId, long userId) {
@@ -429,4 +453,8 @@ public class EventServiceImp implements EventService {
                 }).toList();
     }
 
+    private Map<Long, UserDto> getUserDtoMap(List<Long> ids) {
+        return userService.findAllByIdIn(ids).stream()
+                .collect(Collectors.toMap(UserDto::getId, Function.identity()));
+    }
 }

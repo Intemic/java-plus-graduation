@@ -28,6 +28,7 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+<!-- нужно подключить библиотеку okhttp для того чтобы заработал метод PATCH для feign клиента-->
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-okhttp</artifactId>
