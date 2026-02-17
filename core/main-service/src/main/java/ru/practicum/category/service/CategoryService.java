@@ -1,10 +1,11 @@
 package ru.practicum.category.service;
 
-import ru.practicum.category.dto.CategoryDto;
+import ru.practicum.core.interaction.api.dto.category.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.model.Category;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Сервис для работы с категориями.
@@ -58,4 +59,8 @@ public interface CategoryService {
      * @param catId идентификатор категории
      */
     void delete(long catId);
+
+    Optional<CategoryDto> findByCategoryId(Long categoryId);
+
+    List<CategoryDto> findAllByIdIn(List<Long> categoryIds);
 }

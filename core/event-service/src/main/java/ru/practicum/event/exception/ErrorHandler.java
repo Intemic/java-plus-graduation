@@ -1,4 +1,4 @@
-package ru.practicum.exception;
+package ru.practicum.event.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +8,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.core.interaction.api.exception.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

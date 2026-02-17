@@ -7,6 +7,7 @@ import ru.practicum.core.interaction.api.dto.event.EventFullDto;
 import ru.practicum.core.interaction.api.interface_.EventOperation;
 import ru.practicum.event.service.EventService;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -18,6 +19,11 @@ public class EventInnerController implements EventOperation {
     @Override
     public Optional<EventFullDto> findById(Long eventId) {
         return eventService.findById(eventId);
+    }
+
+    @Override
+    public List<EventFullDto> findAllByIdIn(List<Long> eventIds) {
+        return eventService.findAllByIdIn(eventIds);
     }
 
     @Override

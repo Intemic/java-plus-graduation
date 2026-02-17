@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@EnableFeignClients
+@EnableFeignClients(basePackages = "ru.practicum.core.interaction.api.client")
 public class EventServiceApp {
     public static void main(String[] args) {
         SpringApplication.run(EventServiceApp.class, args);

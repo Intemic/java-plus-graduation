@@ -14,7 +14,7 @@ spring:
 
   datasource:
     driverClassName: "org.postgresql.Driver"
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:8032/main}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:8032/events_db}
     username: ${SPRING_DATASOURCE_USERNAME:main}
     password: ${SPRING_DATASOURCE_PASSWORD:main}
 
@@ -33,7 +33,10 @@ resilience4j.circuitbreaker:
     user-service:
       baseConfig: default
 
-    event-service:
+    main-service:
+      baseConfig: default
+
+    request-service:
       baseConfig: default
 
 

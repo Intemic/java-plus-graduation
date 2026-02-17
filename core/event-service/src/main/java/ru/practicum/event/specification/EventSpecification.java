@@ -23,7 +23,7 @@ public class EventSpecification {
     }
 
     public static Specification<Event> byCategories(List<Long> categories) {
-        return (root, cq, cb) -> root.get("category").get("id").in(categories);
+        return (root, cq, cb) -> root.get("categoryId").in(categories);
     }
 
     public static Specification<Event> byRangeStart(LocalDateTime rangeStart) {

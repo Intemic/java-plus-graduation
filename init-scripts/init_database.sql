@@ -1,3 +1,3 @@
 CREATE DATABASE users_db;
-CREATE DATABASE requests_db
+CREATE DATABASE requests_db;
 CREATE DATABASE events_db;

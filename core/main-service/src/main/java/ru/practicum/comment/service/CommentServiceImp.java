@@ -14,11 +14,11 @@ import ru.practicum.comment.mapper.CommentMapper;
 import ru.practicum.comment.model.Comment;
 import ru.practicum.comment.repository.CommentRepository;
 import ru.practicum.comment.utill.CommentGetParam;
+import ru.practicum.core.interaction.api.client.EventClient;
 import ru.practicum.core.interaction.api.client.UserClient;
+import ru.practicum.core.interaction.api.dto.event.EventFullDto;
 import ru.practicum.core.interaction.api.dto.user.UserDto;
 import ru.practicum.core.interaction.api.enums.EventState;
-import ru.practicum.event.model.Event;
-import ru.practicum.event.service.EventService;
 import ru.practicum.exception.ConflictResource;
 import ru.practicum.exception.ForbiddenResource;
 import ru.practicum.exception.NotFoundResource;
@@ -39,8 +39,9 @@ import java.util.stream.Collectors;
 public class CommentServiceImp implements CommentService {
     private final CommentRepository commentRepository;
     private final UserClient userService;
-    private final EventService eventService;
+    private final EventClient eventService;
     private Map<Long, UserDto> userDtoMap = new HashMap<>();
+    private Map<Long, EventFullDto> eventDtoMap = new HashMap<>();
 
     /**
      * Получает комментарий по идентификаторам пользователя и комментария.
@@ -64,7 +65,13 @@ public class CommentServiceImp implements CommentService {
             throw new ForbiddenResource("Просмотр комментария другого автора невозможен");
         }
 
-        return CommentMapper.mapFromComment(comment, getUserDtoMap(List.of(comment.getEvent().getInitiatorId())));
+        eventDtoMap = eventService.findById(comment.getEventId()).stream()
+                .collect(Collectors.toMap(EventFullDto::getId, Function.identity()));
+
+        return CommentMapper.mapFromComment(
+                comment,
+                getUserDtoMap(List.of(comment.getAuthorId())),
+                eventDtoMap);
     }
 
     /**
@@ -78,13 +85,21 @@ public class CommentServiceImp implements CommentService {
         userService.findById(userId);
 
         List<Comment> comments = commentRepository.findAllByAuthorId(userId);
-        List<Long> initiatorIds = comments.stream()
-                .map( comment -> comment.getEvent().getInitiatorId())
+
+        userDtoMap = userService.findById(userId).stream()
+                .collect(Collectors.toMap(UserDto::getId, Function.identity()));
+
+        List<Long> eventIds = comments.stream()
+                .map(Comment::getEventId)
                 .toList();
-        userDtoMap = getUserDtoMap(initiatorIds);
+        eventDtoMap = eventService.findAllByIdIn(eventIds).stream()
+                .collect(Collectors.toMap(EventFullDto::getId, Function.identity()));
 
         return comments.stream()
-                .map(comment ->  CommentMapper.mapFromComment(comment, userDtoMap))
+                .map(comment -> CommentMapper.mapFromComment(
+                        comment,
+                        userDtoMap,
+                        eventDtoMap))
                 .toList();
     }
 
@@ -104,16 +119,18 @@ public class CommentServiceImp implements CommentService {
             throw new ConflictResource("Пользователь уже оставил комментарий к данному событию");
         }
 
-        comment.setEventObj(eventService.getEventById(comment.getEvent()));
+        EventFullDto event = eventService.findById(comment.getEvent()).get();
 
-        if (!comment.getEventObj().getState().equals(EventState.PUBLISHED)) {
+        if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new ConflictResource("Комментировать можно только опубликованное событие");
         }
 
         Comment newComment = CommentMapper.mapFromNewDto(comment);
         Comment savedComment = commentRepository.save(newComment);
 
-        return CommentMapper.mapFromComment(savedComment, getUserDtoMap(List.of(savedComment.getAuthorId())));
+        return CommentMapper.mapFromComment(savedComment,
+                getUserDtoMap(List.of(savedComment.getAuthorId())),
+                Map.of(event.getId(), event));
     }
 
     /**
@@ -138,10 +155,14 @@ public class CommentServiceImp implements CommentService {
             throw new ForbiddenResource("Редактирование комментария другого автора невозможно");
         }
 
+        EventFullDto event = eventService.findById(existingComment.getEventId()).get();
+
         existingComment.setText(comment.getText());
         Comment updatedComment = commentRepository.save(existingComment);
 
-        return CommentMapper.mapFromComment(updatedComment, getUserDtoMap(List.of(updatedComment.getAuthorId())));
+        return CommentMapper.mapFromComment(updatedComment,
+                getUserDtoMap(List.of(updatedComment.getAuthorId())),
+                Map.of(event.getId(), event));
     }
 
     /**
@@ -181,7 +202,7 @@ public class CommentServiceImp implements CommentService {
         Sort sort = null;
         Pageable pageable = null;
 
-        eventService.getEventById(param.getEventId());
+        eventService.findById(param.getEventId());
 
         if (param.getSortBy() != null) {
             sort = switch (param.getSortBy()) {
@@ -202,13 +223,22 @@ public class CommentServiceImp implements CommentService {
             specification = specification.and(CommentRepository.byAuthor(param.getAuthorIds()));
 
         List<Comment> comments = commentRepository.findAll(specification, pageable).stream().toList();
-        List<Long> initiatorIds = comments.stream()
-                .map( comment -> comment.getEvent().getInitiatorId())
+
+        List<Long> authorIds = comments.stream()
+                .map(comment -> comment.getAuthorId())
                 .toList();
-        userDtoMap = getUserDtoMap(initiatorIds);
+        userDtoMap = getUserDtoMap(authorIds);
+
+        List<Long> eventIds = comments.stream()
+                .map(comment -> comment.getEventId())
+                .toList();
+        eventDtoMap = eventService.findAllByIdIn(eventIds).stream()
+                .collect(Collectors.toMap(EventFullDto::getId, Function.identity()));
 
         return comments.stream()
-                .map(comment ->  CommentMapper.mapFromComment(comment, userDtoMap))
+                .map(comment -> CommentMapper.mapFromComment(comment,
+                        userDtoMap,
+                        eventDtoMap))
                 .toList();
     }
 

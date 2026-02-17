@@ -118,4 +118,6 @@ public interface EventService {
     Optional<EventFullDto> findById(Long eventId);
 
     boolean existsByCategoryId(Long eventId);
+
+    List<EventFullDto> findAllByIdIn(List<Long> eventIds);
 }

@@ -5,8 +5,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.category.dto.CategoryDto;
+import ru.practicum.core.interaction.api.dto.category.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
+import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.core.interaction.api.client.EventClient;
@@ -14,6 +15,7 @@ import ru.practicum.exception.ConflictResource;
 import ru.practicum.exception.NotFoundResource;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Реализация сервиса для работы с категориями.
@@ -29,14 +31,14 @@ public class CategoryServiceImp implements CategoryService {
     public List<CategoryDto> getAll(int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
         return categoryRepository.findAll(pageable).stream()
-                .map(CategoryDto::mapFromCategory)
+                .map(CategoryMapper::mapFromCategory)
                 .toList();
     }
 
     @Override
     public CategoryDto get(long catId) {
         Category category = getCategoryById(catId);
-        return CategoryDto.mapFromCategory(category);
+        return CategoryMapper.mapFromCategory(category);
     }
 
     @Override
@@ -56,7 +58,7 @@ public class CategoryServiceImp implements CategoryService {
         Category category = categoryDto.mapToCategory();
         Category savedCategory = categoryRepository.save(category);
 
-        return CategoryDto.mapFromCategory(savedCategory);
+        return CategoryMapper.mapFromCategory(savedCategory);
     }
 
     @Override
@@ -73,7 +75,7 @@ public class CategoryServiceImp implements CategoryService {
         existingCategory.setName(categoryDto.getName());
         Category updatedCategory = categoryRepository.save(existingCategory);
 
-        return CategoryDto.mapFromCategory(updatedCategory);
+        return CategoryMapper.mapFromCategory(updatedCategory);
     }
 
     @Override
@@ -87,5 +89,18 @@ public class CategoryServiceImp implements CategoryService {
         }
 
         categoryRepository.deleteById(catId);
+    }
+
+    @Override
+    public Optional<CategoryDto> findByCategoryId(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+                .map(category ->  CategoryMapper.mapFromCategory(category));
+    }
+
+    @Override
+    public List<CategoryDto> findAllByIdIn(List<Long> categoryIds) {
+        return categoryRepository.findAllById(categoryIds).stream()
+                .map(CategoryMapper::mapFromCategory)
+                .toList();
     }
 }

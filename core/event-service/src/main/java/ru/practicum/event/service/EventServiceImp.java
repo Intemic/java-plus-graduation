@@ -371,6 +371,24 @@ public class EventServiceImp implements EventService {
         return eventRepository.existsByCategoryId(eventId);
     }
 
+    @Override
+    public List<EventFullDto> findAllByIdIn(List<Long> eventIds) {
+        List<Event> events = eventRepository.findByIdIn(eventIds);
+        List<Long> initiatorIds = events.stream()
+                .map(Event::getInitiatorId)
+                .toList();
+        userDtoMap = getUserDtoMap(initiatorIds);
+
+        List<Long> categoryIds = events.stream()
+                .map(Event::getCategoryId)
+                .toList();
+        categoryDtoMap = getCategoryDtoMap(categoryIds);
+
+        return events.stream()
+                .map( event ->  EventMapper.mapToEventFullDto(event, userDtoMap, categoryDtoMap))
+                .toList();
+    }
+
     private Event getEventByIdAndInitiatorId(long eventId, long userId) {
         return eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundResource("Событие с id=" + eventId + " не найдено"));

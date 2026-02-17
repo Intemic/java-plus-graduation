@@ -14,23 +14,28 @@ spring:
         - id: admin_route
           uri: lb://main-service
           predicates:
-            - Path=/admin/categories/**, /admin/events/**, /admin/compilations/**
+            - Path=/admin/categories/**, /admin/compilations/**
         - id: categories_route
           uri: lb://main-service
           predicates:
             - Path=/categories/**
-        - id: users_route
-          uri: lb://main-service
-          predicates:
-            - Path=/users/{userId}/events/**
-        - id: events_route
-          uri: lb://main-service
-          predicates:
-            - Path=/events/**
+#        - id: users_route
+#          uri: lb://main-service
+#          predicates:
+#            - Path=/users/{userId}/events/**
+#        - id: events_route
+#          uri: lb://main-service
+#          predicates:
+#            - Path=/events/**
         - id: compilations_route
           uri: lb://main-service
           predicates:
             - Path=/compilations/**
+        # сервис событий
+        - id: events_route
+          uri: lb://event-service
+          predicates:
+            - Path=/users/{userId}/events/**, /admin/events/**, /events/**
         # сервис запросов на участие
         - id: request_route
           uri: lb://request-service

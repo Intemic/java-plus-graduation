@@ -13,8 +13,7 @@ import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.core.interaction.api.client.EventClient;
-import ru.practicum.core.interaction.api.client.UserClient;
-import ru.practicum.core.interaction.api.dto.user.UserDto;
+import ru.practicum.core.interaction.api.dto.event.EventFullDto;
 import ru.practicum.exception.ConflictResource;
 import ru.practicum.exception.NotFoundResource;
 
@@ -33,8 +32,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
     private final EventClient eventRepository;
-    private final UserClient userRepository;
-    private Map<Long, UserDto> userDtoMap = new HashMap<>();
+    private Map<Long, EventFullDto> eventDtoMap = new HashMap<>();
 
     @Override
     @Transactional
@@ -48,8 +46,7 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilation = CompilationMapper.toEntity(newCompilationDto);
 
         if (newCompilationDto.getEvents() != null && !newCompilationDto.getEvents().isEmpty()) {
-            List<Event> events = eventRepository.findAllById(newCompilationDto.getEvents());
-            compilation.setEvents(new HashSet<>(events));
+            compilation.setEvents(newCompilationDto.getEvents().stream().collect(Collectors.toSet()));
         } else {
             compilation.setEvents(new HashSet<>());
         }
@@ -57,7 +54,11 @@ public class CompilationServiceImpl implements CompilationService {
         try {
             Compilation savedCompilation = compilationRepository.save(compilation);
             log.info("Compilation created successfully with id: {}", savedCompilation.getId());
-            return CompilationMapper.toDto(savedCompilation, getUserDtoMap(savedCompilation));
+
+            eventDtoMap = eventRepository.findAllByIdIn(newCompilationDto.getEvents()).stream()
+                    .collect(Collectors.toMap(EventFullDto::getId, Function.identity()));
+
+            return CompilationMapper.toDto(savedCompilation, eventDtoMap);
         } catch (DataIntegrityViolationException e) {
             throw new ConflictResource("Compilation creation failed due to data integrity violation");
         }
@@ -96,14 +97,17 @@ public class CompilationServiceImpl implements CompilationService {
         }
 
         if (updateRequest.getEvents() != null) {
-            Set<Event> events = new HashSet<>(eventRepository.findAllById(updateRequest.getEvents()));
-            compilation.setEvents(events);
+            compilation.setEvents(updateRequest.getEvents().stream().collect(Collectors.toSet()));
         }
 
         try {
             Compilation updatedCompilation = compilationRepository.save(compilation);
             log.info("Compilation with id: {} updated successfully", compId);
-            return CompilationMapper.toDto(updatedCompilation, getUserDtoMap(updatedCompilation));
+
+            eventDtoMap = eventRepository.findAllByIdIn(updateRequest.getEvents()).stream()
+                    .collect(Collectors.toMap(EventFullDto::getId, Function.identity()));
+
+            return CompilationMapper.toDto(updatedCompilation, eventDtoMap);
         } catch (DataIntegrityViolationException e) {
             throw new ConflictResource("Compilation update failed due to data integrity violation");
         }
@@ -120,18 +124,16 @@ public class CompilationServiceImpl implements CompilationService {
             compilations = compilationRepository.findAll(pageable).getContent();
         }
 
-        List<Event> eventsList = compilations.stream()
-                .flatMap(compilation -> compilation.getEvents().stream())
-                .collect(Collectors.toList());
-
-        List<Long> initiatorIds = eventsList.stream()
-                .map(Event::getInitiatorId)
+        List<Long> eventIds = compilations.stream()
+                .map(Compilation::getEvents)
+                .flatMap(Set::stream)
                 .toList();
-        userDtoMap = userRepository.findAllByIdIn(initiatorIds).stream()
-                .collect(Collectors.toMap(UserDto::getId, Function.identity()));
+
+        eventDtoMap = eventRepository.findAllByIdIn(eventIds).stream()
+                .collect(Collectors.toMap(EventFullDto::getId, Function.identity()));
 
         return compilations.stream()
-                .map(compilation ->  CompilationMapper.toDto(compilation, userDtoMap))
+                .map(compilation -> CompilationMapper.toDto(compilation, eventDtoMap))
                 .collect(Collectors.toList());
     }
 
@@ -142,18 +144,9 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundResource("Compilation with id=" + compId + " was not found"));
 
-        return CompilationMapper.toDto(compilation, getUserDtoMap(compilation));
-    }
+        eventDtoMap = eventRepository.findAllByIdIn(compilation.getEvents().stream().toList()).stream()
+                .collect(Collectors.toMap(EventFullDto::getId, Function.identity()));
 
-    private Map<Long, UserDto> getUserDtoMap(Compilation compilation) {
-        List<Long> initiatorIds = compilation.getEvents().stream()
-                .map(Event::getInitiatorId)
-                .toList();
-
-        if (initiatorIds.isEmpty())
-            return Map.of();
-
-        return userRepository.findAllByIdIn(initiatorIds).stream()
-                .collect(Collectors.toMap(UserDto::getId, Function.identity()));
+        return CompilationMapper.toDto(compilation, eventDtoMap);
     }
 }

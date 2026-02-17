@@ -23,11 +23,4 @@ public class CategoryDto {
     @Size(min = 1, max = 50)
     @NotBlank
     private String name;
-
-    /**
-     * Создает DTO из сущности категории.
-     *
-     * @param category сущность категории
-     * @return DTO категории
-     */
 }
