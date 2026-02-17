@@ -5,3 +5,4 @@ CREATE TABLE IF NOT EXISTS requests(
     requester_id BIGINT,
     status VARCHAR(20)
 );
+

@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import ru.practicum.user.model.User;
 
 /**
  * DTO для обновления существующего комментария.
@@ -40,11 +39,4 @@ public class UpdateCommentDto {
     @NotBlank(message = "Текст комментария не может быть пустым")
     @Size(min = 3, max = 5000, message = "Текст комментария должен содержать от 3 до 5000 символов")
     private String text;
-
-    /**
-     * Объект автора комментария.
-     * Устанавливается автоматически сервисом, игнорируется при десериализации JSON.
-     */
-    @JsonIgnore
-    private User authorObj;
 }

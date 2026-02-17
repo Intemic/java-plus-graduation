@@ -1,61 +1,75 @@
 spring:
   cloud:
     gateway:
+      # для тестирования
+      httpclient:
+        connect-timeout: 1000
       discovery:
         locator:
           enabled: true
-#      default-filters:
-#        - CircuitBreaker=myCircuitBreaker
+      default-filters:
+        - CircuitBreaker=myCircuitBreaker
       routes:
-        - id: inner_requests_route
-          uri: lb://request-service
+        # основной сервис
+        - id: admin_route
+          uri: lb://main-service
           predicates:
-            - Path=/inner/requests/**
-
-#        - id: admin_route
-#          uri: lb://main-service
-#          predicates:
-#            - Path=/admin/**
-#        - id: categories_route
-#          uri: lb://main-service
-#          predicates:
-#            - Path=/categories/**
+            - Path=/admin/categories/**, /admin/compilations/**
+        - id: categories_route
+          uri: lb://main-service
+          predicates:
+            - Path=/categories/**
 #        - id: users_route
 #          uri: lb://main-service
 #          predicates:
-#            - Path=/users/**
+#            - Path=/users/{userId}/events/**
 #        - id: events_route
 #          uri: lb://main-service
 #          predicates:
 #            - Path=/events/**
-#        - id: compilations_route
-#          uri: lb://main-service
-#          predicates:
-#            - Path=/compilations/**
-#        - id: inner_requests_route
-#          uri: lb://request-service
-#          predicates:
-#            - Path=/inner/requests/**
-#        - id: stats_hit_route
-#          uri: lb://stats-server
-#          predicates:
-#            - Path=/hit
-#        - id: stats_stat_route
-#          uri: lb://stats-server
-#          predicates:
-#            - Path=/stats**
+        - id: compilations_route
+          uri: lb://main-service
+          predicates:
+            - Path=/compilations/**
+        # сервис событий
+        - id: events_route
+          uri: lb://event-service
+          predicates:
+            - Path=/users/{userId}/events/**, /admin/events/**, /events/**
+        # сервис запросов на участие
+        - id: request_route
+          uri: lb://request-service
+          predicates:
+            - Path=/users/{userId}/requests/**
+        # сервис пользователей
+        - id: admin_users_route
+          uri: lb://user-service
+          predicates:
+            - Path=/admin/users/**
+        # сервис статистики
+        - id: stats_hit_route
+          uri: lb://stats-server
+          predicates:
+            - Path=/hit
+        - id: stats_stat_route
+          uri: lb://stats-server
+          predicates:
+            - Path=/stats**
 
-#resilience4j:
-#  circuitbreaker:
-#    instances:
-#      myCircuitBreaker:
-#        slidingWindowSize: 10
-#        failureRateThreshold: 50
-#        waitDurationInOpenState: 10000
-#        permittedNumberOfCallsInHalfOpenState: 3
-#        slidingWindowType: COUNT_BASED
-#        minimumNumberOfCalls: 5
-#        automaticTransitionFromOpenToHalfOpenEnabled: true
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10
+      failureRateThreshold: 50
+      waitDurationInOpenState: 10000
+      permittedNumberOfCallsInHalfOpenState: 3
+      slidingWindowType: COUNT_BASED
+      minimumNumberOfCalls: 5
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+
+  instances:
+    myCircuitBreaker:
+      baseConfig: default
 
 server:
   port: 8080

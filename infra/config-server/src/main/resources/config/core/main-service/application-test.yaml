@@ -6,7 +6,7 @@ spring:
 
   datasource:
     driverClassName: "org.h2.Driver"
-    url: jdbc:h2:file:./db/main}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql:jdbc:h2:file:./db/main}
     username: ${SPRING_DATASOURCE_USERNAME:main}
     password: ${SPRING_DATASOURCE_PASSWORD:main}
 

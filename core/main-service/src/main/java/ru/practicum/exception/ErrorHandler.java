@@ -8,7 +8,6 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.event.validate.ErrorCustomFuture;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -65,24 +64,6 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleConflictResource(ConflictResource ex) {
         log.error("Resource conflict: {}", ex.getMessage());
-        return ApiError.builder()
-                .message(ex.getMessage())
-                .reason("Нарушено ограничение целостности")
-                .status(HttpStatus.CONFLICT.toString())
-                .timestamp(LocalDateTime.now().format(FORMAT_DATE_TIME))
-                .build();
-    }
-
-    /**
-     * Обрабатывает исключения валидации даты.
-     *
-     * @param ex исключение ErrorCustomFuture
-     * @return объект ошибки API
-     */
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiError handleErrorCustomFuture(ErrorCustomFuture ex) {
-        log.error("Date validation error: {}", ex.getMessage());
         return ApiError.builder()
                 .message(ex.getMessage())
                 .reason("Нарушено ограничение целостности")

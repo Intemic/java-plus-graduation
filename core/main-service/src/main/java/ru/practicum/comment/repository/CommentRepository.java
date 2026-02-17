@@ -43,11 +43,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
 
     static Specification<Comment> byEventId(long eventId) {
         return (root, cq, cb) ->
-                cb.equal(root.get("event").get("id"), eventId);
+                cb.equal(root.get("eventId"), eventId);
     }
 
     static Specification<Comment> byAuthor(List<Long> authorIds) {
         return (root, cq, cb) ->
-                root.get("author").get("id").in(authorIds);
+                root.get("authorId").in(authorIds);
     }
 }

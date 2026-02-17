@@ -4,8 +4,11 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.comment.dto.CommentDto;
 import ru.practicum.comment.dto.NewCommentDto;
 import ru.practicum.comment.model.Comment;
-import ru.practicum.event.mapper.EventMapper;
-import ru.practicum.user.mapper.UserMapper;
+import ru.practicum.core.interaction.api.dto.event.EventFullDto;
+import ru.practicum.core.interaction.api.dto.event.EventShortDto;
+import ru.practicum.core.interaction.api.dto.user.UserDto;
+
+import java.util.Map;
 
 /**
  * Утилитарный класс для преобразования между сущностями Comment и DTO.
@@ -26,8 +29,8 @@ public class CommentMapper {
         }
 
         return Comment.builder()
-                .author(commentDto.getAuthorObj())
-                .event(commentDto.getEventObj())
+                .authorId(commentDto.getAuthor())
+                .eventId(commentDto.getEvent())
                 .created(commentDto.getCreated())
                 .text(commentDto.getText())
                 .build();
@@ -41,17 +44,50 @@ public class CommentMapper {
      * @return DTO комментария для возврата в API
      * @throws IllegalArgumentException если comment равен null
      */
-    public static CommentDto mapFromComment(Comment comment) {
+    public static CommentDto mapFromComment(Comment comment,
+                                            Map<Long, UserDto> userDtoMap,
+                                            Map<Long, EventFullDto> eventDtoMap) {
         if (comment == null) {
             throw new IllegalArgumentException("Comment не может быть null");
         }
 
         return CommentDto.builder()
                 .id(comment.getId())
-                .author(UserMapper.mapToDto(comment.getAuthor()))
-                .event(EventMapper.mapToEventShortDto(comment.getEvent()))
+                .author(toUserDto(comment.getAuthorId(), userDtoMap))
+                .event(mapToEventShortDto(comment.getEventId(), eventDtoMap))
                 .created(comment.getCreated())
                 .text(comment.getText())
+                .build();
+    }
+
+    public static UserDto toUserDto(long userId, Map<Long, UserDto> userDtoMap) {
+        if (userDtoMap == null || userId == 0) {
+            return null;
+        }
+
+        UserDto userDto = null;
+        if (userDtoMap.containsKey(userId))
+            userDto = userDtoMap.get(userId);
+
+        return userDto;
+    }
+
+    public static EventShortDto mapToEventShortDto(Long eventId, Map<Long, EventFullDto> eventDtoMap) {
+        if (eventDtoMap == null || eventDtoMap.isEmpty())
+            return null;
+
+        EventFullDto event = eventDtoMap.get(eventId);
+
+        return EventShortDto.builder()
+                .id(event.getId())
+                .title(event.getTitle())
+                .annotation(event.getAnnotation())
+                .category(event.getCategory())
+                .initiator(event.getInitiator())
+                .paid(event.getPaid())
+                .eventDate(event.getEventDate())
+                .confirmedRequests(event.getConfirmedRequests())
+                .views(event.getViews())
                 .build();
     }
 }

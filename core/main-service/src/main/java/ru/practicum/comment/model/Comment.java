@@ -2,8 +2,6 @@ package ru.practicum.comment.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.practicum.event.model.Event;
-import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -35,18 +33,16 @@ public class Comment {
      * Связь многие-к-одному с сущностью User.
      * Загружается лениво для оптимизации производительности.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @Column(name = "author_id", nullable = false)
+    private Long authorId;
 
     /**
      * Событие, к которому относится комментарий.
      * Связь многие-к-одному с сущностью Event.
      * Загружается лениво для оптимизации производительности.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id", nullable = false)
-    private Event event;
+    @Column(name = "event_id", nullable = false)
+    private Long eventId;
 
     /**
      * Дата и время создания комментария.
@@ -63,26 +59,13 @@ public class Comment {
     @Column(nullable = false, length = 5000)
     private String text;
 
-    /**
-     * Сравнивает данный комментарий с другим объектом на равенство.
-     * Два комментария считаются равными, если их идентификаторы совпадают.
-     *
-     * @param o объект для сравнения
-     * @return true если объекты равны, иначе false
-     */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Comment comment = (Comment) o;
         return Objects.equals(id, comment.id);
     }
 
-    /**
-     * Возвращает хэш-код комментария на основе его идентификатора.
-     *
-     * @return хэш-код комментария
-     */
     @Override
     public int hashCode() {
         return Objects.hashCode(id);

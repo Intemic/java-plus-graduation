@@ -1,0 +1,49 @@
+package ru.practicum.request.service;
+
+import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
+import ru.practicum.core.interaction.api.enums.RequestStatus;
+
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * Сервис для работы с заявками на участие в событиях.
+ */
+public interface RequestService {
+
+    /**
+     * Получает все заявки пользователя.
+     *
+     * @param userId идентификатор пользователя
+     * @return список заявок
+     */
+    List<ParticipationRequestDto> getRequestsByUserId(Long userId);
+
+    /**
+     * Создает новую заявку на участие в событии.
+     *
+     * @param userId  идентификатор пользователя
+     * @param eventId идентификатор события
+     * @return созданная заявка
+     */
+    ParticipationRequestDto createRequest(Long userId, Long eventId);
+
+    /**
+     * Отменяет заявку на участие.
+     *
+     * @param userId    идентификатор пользователя
+     * @param requestId идентификатор заявки
+     * @return отмененная заявка
+     */
+    ParticipationRequestDto cancelRequest(Long userId, Long requestId);
+
+    List<ParticipationRequestDto> findByEventId(Long eventId);
+
+    Long countByEventIdAndStatus(Long eventId, RequestStatus status);
+
+    List<ParticipationRequestDto> findByIdInAndEventId(Long eventId, List<Long> requestIds);
+
+    List<ParticipationRequestDto> findAllByEventIdInAndStatus(RequestStatus status, Collection<Long> eventIds);
+
+    void updateStatus(List<ParticipationRequestDto> requests);
+}
