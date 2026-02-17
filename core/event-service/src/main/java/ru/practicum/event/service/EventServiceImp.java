@@ -373,6 +373,9 @@ public class EventServiceImp implements EventService {
 
     @Override
     public List<EventFullDto> findAllByIdIn(List<Long> eventIds) {
+        if (eventIds == null)
+            return List.of();
+
         List<Event> events = eventRepository.findByIdIn(eventIds);
         List<Long> initiatorIds = events.stream()
                 .map(Event::getInitiatorId)
@@ -503,6 +506,8 @@ public class EventServiceImp implements EventService {
     }
 
     private Map<Long, CategoryDto> getCategoryDtoMap(List<Long> ids) {
+        List<CategoryDto> categoryDtos = categoryService.findAllByIdIn(ids);
+
         return categoryService.findAllByIdIn(ids).stream()
                 .collect(Collectors.toMap(CategoryDto::getId, Function.identity()));
     }

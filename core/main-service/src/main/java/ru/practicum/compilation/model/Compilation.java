@@ -28,10 +28,17 @@ public class Compilation {
     private Boolean pinned = false;
 
     //@ManyToMany
-    @JoinTable(
+//    @JoinTable(
+//            name = "compilation_events",
+//            joinColumns = @JoinColumn(name = "compilation_id"),
+//            inverseJoinColumns = @JoinColumn(name = "event_id")
+//    )
+
+    @ElementCollection
+    @CollectionTable(
             name = "compilation_events",
-            joinColumns = @JoinColumn(name = "compilation_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id")
+            joinColumns = @JoinColumn(name = "compilation_id")
     )
+    @Column(name = "event_id")
     private Set<Long> events;
 }

@@ -14,7 +14,7 @@ public interface EventOperation {
     Optional<EventFullDto> findById(@PathVariable @Positive Long eventId);
 
     @GetMapping
-    List<EventFullDto> findAllByIdIn(@RequestParam List<Long> eventIds);
+    List<EventFullDto> findAllByIdIn(@RequestParam(required = false) List<Long> eventIds);
 
     @GetMapping("/{eventId}/exist")
     boolean existsByCategoryId(@PathVariable @Positive Long eventId);
