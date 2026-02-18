@@ -1,6 +1,5 @@
 package ru.practicum.core.interaction.api.dto.user;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
