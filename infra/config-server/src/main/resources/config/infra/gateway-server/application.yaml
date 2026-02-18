@@ -2,8 +2,8 @@ spring:
   cloud:
     gateway:
       # для тестирования
-      httpclient:
-        connect-timeout: 1000
+#      httpclient:
+#        connect-timeout: 1000
       discovery:
         locator:
           enabled: true

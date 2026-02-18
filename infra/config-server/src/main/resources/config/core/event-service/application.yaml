@@ -33,7 +33,7 @@ resilience4j.circuitbreaker:
     user-service:
       baseConfig: default
 
-    main-service:
+    comment-service:
       baseConfig: default
 
     request-service:
@@ -48,6 +48,3 @@ management:
 
 server:
   port: 0
-
-stats-client:
-  id: stats-server
