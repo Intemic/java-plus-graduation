@@ -12,23 +12,15 @@ spring:
       routes:
         # основной сервис
         - id: admin_route
-          uri: lb://main-service
+          uri: lb://comment-service
           predicates:
             - Path=/admin/categories/**, /admin/compilations/**
         - id: categories_route
-          uri: lb://main-service
+          uri: lb://comment-service
           predicates:
             - Path=/categories/**
-#        - id: users_route
-#          uri: lb://main-service
-#          predicates:
-#            - Path=/users/{userId}/events/**
-#        - id: events_route
-#          uri: lb://main-service
-#          predicates:
-#            - Path=/events/**
         - id: compilations_route
-          uri: lb://main-service
+          uri: lb://comment-service
           predicates:
             - Path=/compilations/**
         # сервис событий
