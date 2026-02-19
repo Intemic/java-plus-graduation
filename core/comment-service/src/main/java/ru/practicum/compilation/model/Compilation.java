@@ -27,13 +27,6 @@ public class Compilation {
     @Builder.Default
     private Boolean pinned = false;
 
-    //@ManyToMany
-//    @JoinTable(
-//            name = "compilation_events",
-//            joinColumns = @JoinColumn(name = "compilation_id"),
-//            inverseJoinColumns = @JoinColumn(name = "event_id")
-//    )
-
     @ElementCollection
     @CollectionTable(
             name = "compilation_events",
