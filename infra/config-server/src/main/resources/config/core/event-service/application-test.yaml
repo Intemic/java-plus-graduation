@@ -44,7 +44,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: info
+        include: health, info, metrics, beans, mappings
 
 server:
   port: 0
