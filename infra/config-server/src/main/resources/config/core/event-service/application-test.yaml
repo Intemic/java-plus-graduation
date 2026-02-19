@@ -1,0 +1,52 @@
+spring:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+      # нужно подключить библиотеку okhttp для того чтобы заработал метод PATCH для feign клиента
+      okhttp:
+        enabled: true
+
+  datasource:
+    driverClassName: "org.h2.Driver"
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql:jdbc:h2:file:./db/events_db}
+    username: ${SPRING_DATASOURCE_USERNAME:main}
+    password: ${SPRING_DATASOURCE_PASSWORD:main}
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10
+      failureRateThreshold: 50
+      waitDurationInOpenState: 10000
+      permittedNumberOfCallsInHalfOpenState: 3
+      slidingWindowType: COUNT_BASED
+      minimumNumberOfCalls: 5
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+
+  instances:
+    user-service:
+      baseConfig: default
+
+    comment-service:
+      baseConfig: default
+
+    request-service:
+      baseConfig: default
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, beans, mappings
+
+server:
+  port: 0
+
+

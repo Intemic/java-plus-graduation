@@ -1,32 +1,48 @@
 spring:
   cloud:
     gateway:
+      # для тестирования
+#      httpclient:
+#        connect-timeout: 1000
       discovery:
         locator:
           enabled: true
       default-filters:
         - CircuitBreaker=myCircuitBreaker
       routes:
+        # основной сервис
         - id: admin_route
-          uri: lb://main-service
+          uri: lb://comment-service
           predicates:
-            - Path=/admin/**
+            - Path=/admin/categories/**, /admin/compilations/**
         - id: categories_route
-          uri: lb://main-service
+          uri: lb://comment-service
           predicates:
             - Path=/categories/**
-        - id: users_route
-          uri: lb://main-service
-          predicates:
-            - Path=/users/**
-        - id: events_route
-          uri: lb://main-service
-          predicates:
-            - Path=/events/**
         - id: compilations_route
-          uri: lb://main-service
+          uri: lb://comment-service
           predicates:
             - Path=/compilations/**
+        - id: comments_route
+          uri: lb://comment-service
+          predicates:
+            - Path=/users/{userId}/comments/**, /events/{eventId}/comments/**
+        # сервис событий
+        - id: events_route
+          uri: lb://event-service
+          predicates:
+            - Path=/users/{userId}/events/**, /admin/events/**, /events/**
+        # сервис запросов на участие
+        - id: request_route
+          uri: lb://request-service
+          predicates:
+            - Path=/users/{userId}/requests/**
+        # сервис пользователей
+        - id: admin_users_route
+          uri: lb://user-service
+          predicates:
+            - Path=/admin/users/**
+        # сервис статистики
         - id: stats_hit_route
           uri: lb://stats-server
           predicates:
@@ -36,17 +52,27 @@ spring:
           predicates:
             - Path=/stats**
 
-resilience4j:
-  circuitbreaker:
-    instances:
-      myCircuitBreaker:
-        slidingWindowSize: 10
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10000
-        permittedNumberOfCallsInHalfOpenState: 3
-        slidingWindowType: COUNT_BASED
-        minimumNumberOfCalls: 5
-        automaticTransitionFromOpenToHalfOpenEnabled: true
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10
+      failureRateThreshold: 50
+      waitDurationInOpenState: 10000
+      permittedNumberOfCallsInHalfOpenState: 3
+      slidingWindowType: COUNT_BASED
+      minimumNumberOfCalls: 5
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+
+  instances:
+    myCircuitBreaker:
+      baseConfig: default
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, beans, mappings
+
 
 server:
   port: 8080
