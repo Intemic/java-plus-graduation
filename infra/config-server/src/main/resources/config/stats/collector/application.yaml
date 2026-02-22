@@ -1,0 +1,16 @@
+grpc:
+  server:
+    port: 0
+
+collector:
+  kafka:
+    main:
+      server_config: "localhost:9092"
+    topics:
+      action: "stats.user-actions.v1"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, beans, mappings
