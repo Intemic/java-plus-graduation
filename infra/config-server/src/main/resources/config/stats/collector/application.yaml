@@ -8,6 +8,9 @@ collector:
       server_config: "localhost:9092"
     topics:
       action: "stats.user-actions.v1"
+    serializer_class:
+      key: "org.apache.kafka.common.serialization.LongSerializer"
+      value: "ru.yandex.practicum.kafka.serialization.BaseAvroSerializer"
 
 management:
   endpoints:
