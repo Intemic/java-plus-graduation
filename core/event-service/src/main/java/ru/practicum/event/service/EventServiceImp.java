@@ -7,7 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.StatsClient;
+import ru.practicum.client.StatsClient;
 import ru.practicum.core.interaction.api.client.CategoryClient;
 import ru.practicum.core.interaction.api.client.RequestClient;
 import ru.practicum.core.interaction.api.client.UserClient;
@@ -390,6 +390,16 @@ public class EventServiceImp implements EventService {
         return events.stream()
                 .map( event ->  EventMapper.mapToEventFullDto(event, userDtoMap, categoryDtoMap))
                 .toList();
+    }
+
+    @Override
+    public boolean likeEvent(long eventId, long userId) {
+        requestRepository.findByEventId(eventId).stream()
+                .filter(request -> request.getRequester() == userId)
+                .findFirst( )
+                .orElseThrow(() -> new NotFoundResource("Пользователь не посещал мероприятие " + eventId));
+
+        return true;
     }
 
     private Event getEventByIdAndInitiatorId(long eventId, long userId) {

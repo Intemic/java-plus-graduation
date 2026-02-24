@@ -120,4 +120,6 @@ public interface EventService {
     boolean existsByCategoryId(Long eventId);
 
     List<EventFullDto> findAllByIdIn(List<Long> eventIds);
+
+    boolean likeEvent(long eventId, long userId);
 }

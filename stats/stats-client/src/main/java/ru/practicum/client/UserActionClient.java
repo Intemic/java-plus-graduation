@@ -1,4 +1,4 @@
-package ru.practicum;
+package ru.practicum.client;
 
 import com.google.protobuf.Timestamp;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -14,13 +14,15 @@ public class UserActionClient {
     @GrpcClient("collector")
     UserActionControllerGrpc.UserActionControllerBlockingStub userActionController;
 
-    public void collectUserAction(long userId, long eventId, ActionTypeProto actionType, Instant instant) {
+    public void collectUserAction(long userId, long eventId, ActionTypeProto actionType) {
+        Instant instant = Instant.now();
+
         UserActionProto userAction = UserActionProto.newBuilder()
                 .setUserId(userId)
                 .setUserId(eventId)
                 .setActionType(actionType)
                 .setTimestamp(Timestamp.newBuilder()
-                        .setSeconds(instant.getEpochSecond())
+                        .setSeconds( instant.getEpochSecond())
                         .setNanos(instant.getNano())
                         .build())
                 .build();
