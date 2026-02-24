@@ -1,0 +1,25 @@
+aggregator:
+  kafka:
+    main:
+      server_config: "localhost:9092"
+      producer:
+        key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+        value-serializer: "ru.yandex.practicum.kafka.serialization.BaseAvroSerializer"
+      consumer:
+        key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+        value-deserializer: "ru.yandex.practicum.kafka.serialization.BaseAvroDeserializer"
+        group-id: "aggregator-consumer"
+        duration-millis: 100
+        auto-offset-reset: "earliest"
+    topics:
+      action: "stats.user-actions.v1"
+      similarity: "stats.events-similarity.v1"
+
+server:
+  port: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, beans, mappings

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
 import ru.practicum.ewm.stats.proto.UserActionProto;
 import ru.practicum.stats.collector.config.CollectorConfig;
-import ru.practicum.stats.collector.config.KafkaClient;
+import ru.practicum.stats.collector.kafka.KafkaClient;
 
 import java.time.Instant;
 

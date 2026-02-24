@@ -1,7 +1,6 @@
-package ru.practicum.stats.collector.config;
+package ru.practicum.stats.collector.kafka;
 
 import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.producer.Producer;
 
 public interface KafkaClient {

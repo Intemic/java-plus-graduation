@@ -12,6 +12,9 @@ collector:
       key: "org.apache.kafka.common.serialization.LongSerializer"
       value: "ru.yandex.practicum.kafka.serialization.BaseAvroSerializer"
 
+server:
+  port: 0
+
 management:
   endpoints:
     web:

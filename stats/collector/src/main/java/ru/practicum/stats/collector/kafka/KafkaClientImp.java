@@ -1,4 +1,4 @@
-package ru.practicum.stats.collector.config;
+package ru.practicum.stats.collector.kafka;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -6,6 +6,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.stereotype.Component;
+import ru.practicum.stats.collector.config.CollectorConfig;
 
 import java.time.Duration;
 import java.util.Properties;
