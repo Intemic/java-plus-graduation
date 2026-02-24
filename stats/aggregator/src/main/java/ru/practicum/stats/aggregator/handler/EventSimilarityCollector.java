@@ -3,77 +3,100 @@ package ru.practicum.stats.aggregator.handler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import ru.practicum.ewm.stats.avro.ActionTypeAvro;
 import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
 
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.RecursiveTask;
 
 @Slf4j
 public class EventSimilarityCollector {
-//    private Map<String, SensorsSnapshotAvro> shaphots = new HashMap<>();
-    //private Map<Long, Map<>>
+    // ключи: Event, User, Weight
+    private Map<Long, Map<Long, Double>> mapMaxEventUserWeight = new HashMap<>();
+    // ключи Event, Event, Weight
+    private Map<Long, Map<Long, Double>> mapMinEventEventWeight = new HashMap<>();
     private final ObjectMapper objectMapper;
 
     public EventSimilarityCollector(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
-    public Optional<EventSimilarityAvro> updateState(UserActionAvro event) {
+    public List<EventSimilarityAvro> updateState(UserActionAvro event) {
         try {
             log.info("Пришло сообщение %s".formatted(objectMapper.writeValueAsString(event)));
         } catch (JsonProcessingException e) {
             log.info("Пришло сообщение %s".formatted(event.toString()));
         }
 
-//        SensorsSnapshotAvro snapshotAvro = shaphots.computeIfAbsent(event.getHubId(), k -> SensorsSnapshotAvro.newBuilder()
-//                .setHubId(event.getHubId())
-//                .setTimestamp(event.getTimestamp())
-//                .setSensorsState(new HashMap<>())
-//                .build());
-//
-//        if (needUpdating(event, snapshotAvro.getSensorsState().get(event.getId()))) {
-//            snapshotAvro.getSensorsState().put(event.getId(), SensorStateAvro.newBuilder()
-//                    .setTimestamp(event.getTimestamp())
-//                    .setData(event.getPayload())
-//                    .build());
-//            snapshotAvro.setTimestamp(event.getTimestamp());
-//
-//            return Optional.of(snapshotAvro);
-//        }
+        if (needUpdating(event))
+            return getEventsSimilarityAvro(event);
 
         log.info("Данные события не изменились");
-        return Optional.empty();
+        return List.of();
     }
 
-//    private boolean needUpdating(SensorEventAvro event, SensorStateAvro sensorsState) {
-//        if (sensorsState == null) {
-//            log.info("Отличаются значение, предыдущего события нет");
-//            return true;
-//        }
+    private boolean needUpdating(UserActionAvro event) {
+        Double currentWeight =  getWeightForAction(event.getActionType());
+        Double oldWeight = null;
+
+        // если вес пришедшего действия меньше, ничего не делаем
+        if (mapMaxEventUserWeight.containsKey(event.getEventId())) {
+            Map<Long, Double> mapUserWeight = mapMaxEventUserWeight.get(event.getEventId());
+            if (mapUserWeight.containsKey(event.getUserId())) {
+                oldWeight = mapUserWeight.get(event.getUserId());
+                log.info("Сохраненое значение веса: %s, пришло значение: %s".formatted(oldWeight, currentWeight));
+                if (oldWeight >= currentWeight) {
+                    log.info("Обновление не требуется");
+                    return false;
+                }
+            }
+        }
+
+        log.info("Сохраненое значение веса: %s, пришло значение: %s"
+                .formatted(oldWeight == null ? "null" : oldWeight, currentWeight));
+        log.info("Данные необходимо обновить");
+        return true;
+    }
+
+    private double getWeightForAction(ActionTypeAvro action) {
+        return switch (action) {
+            case VIEW -> 0.4;
+            case REGISTER -> 0.8;
+            case LIKE -> 1.0;
+        };
+    }
+
+//    public void put(long eventA, long eventB, double sum) {
+//        long first  = Math.min(eventA, eventB);
+//        long second = Math.max(eventA, eventB);
 //
-//        // если событие произошло позже и данные изменились
-//        if (event.getTimestamp().isAfter(sensorsState.getTimestamp())
-//                || event.getTimestamp().equals(sensorsState.getTimestamp())) {
-//            SpecificRecordBase payload = (SpecificRecordBase) event.getPayload();
-//            SpecificRecordBase data = (SpecificRecordBase) sensorsState.getData();
-//            Schema schema = payload.getSchema();
+//        minWeightsSums
+//                .computeIfAbsent(first, e -> new HashMap<>())
+//                .put(second, sum);
+//    }
 //
-//            // сравниваем по полям
-//            for (Schema.Field field : schema.getFields()) {
-//                Object newValue = payload.get(field.name());
-//                Object oldValue = data.get(field.name());
-//                if (!newValue.equals(oldValue)) {
-//                    log.info("Отличаются значения поля: \"%s\", старое = %s, новое = %s".formatted(
-//                            field.name(),
-//                            oldValue == null ? "null" : oldValue.toString(),
-//                            newValue.toString())
-//                    );
-//                    return true;
-//                }
-//            }
-//        }
+//    public double get(long eventA, long eventB) {
+//        long first  = Math.min(eventA, eventB);
+//        long second = Math.max(eventA, eventB);
 //
- //        return false;
+//        return minWeightsSums
+//                .computeIfAbsent(first, e -> new HashMap<>())
+//                .getOrDefault(second, 0.0);
 //    }
 
+    private List<EventSimilarityAvro> getEventsSimilarityAvro(UserActionAvro event) {
+
+//        return  EventSimilarityAvro.newBuilder()
+//                .setEventA()
+//                .setEventB()
+//                .setScore()
+//                .setTimestamp(Instant.now())
+//                .build();
+        return List.of();
+    }
 }

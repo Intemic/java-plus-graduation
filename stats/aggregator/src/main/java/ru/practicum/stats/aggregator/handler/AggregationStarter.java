@@ -74,18 +74,21 @@ public class AggregationStarter {
 
     private void process(ConsumerRecord<String, UserActionAvro> record) {
         // данные изменились? отправляем
-        eventCollector.updateState(record.value()).ifPresent((snapshotAvro) -> {
-            ProducerRecord<String, EventSimilarityAvro> recordAvro =
-                    new ProducerRecord<>(config.getKafka().getTopics().getSimilarity(), snapshotAvro);
-            kafkaClient.getProducer().send(recordAvro);
-            String json;
-            try {
-                json = objectMapper.writeValueAsString(snapshotAvro);
-            } catch (JsonProcessingException e) {
-                json = snapshotAvro.toString();
-            }
-            log.info("Отправлено сообщение в Kafka: %s".formatted(json));
-        });
+        eventCollector.updateState(record.value())
+                .forEach(eventSimilarity -> {
+
+                    String json;
+                    try {
+                        json = objectMapper.writeValueAsString(eventSimilarity);
+                    } catch (JsonProcessingException e) {
+                        json = eventSimilarity.toString();
+                    }
+
+                    ProducerRecord<String, EventSimilarityAvro> recordAvro =
+                            new ProducerRecord<>(config.getKafka().getTopics().getSimilarity(), eventSimilarity);
+                    kafkaClient.getProducer().send(recordAvro);
+                    log.info("Отправлено сообщение в Kafka: %s".formatted(json));
+                });
     }
 
     private void fixOffset(ConsumerRecord<String, UserActionAvro> record,
