@@ -111,35 +111,6 @@ public class EventSimilarityCollector {
         // получаем преведущую оценку
         oldWeight = mapMaxEventUserWeight.computeIfAbsent(event.getEventId(), v -> new HashMap<>())
                 .computeIfAbsent(event.getUserId(), v -> Double.valueOf(0));
-
-
-        // новое не учтенное событие
-        if (!setEvents.contains(event.getEventId())) {
-            mapEventSum.put(event.getEventId(), weight);
-            // пересчитываем коэфф для всех существующих событий
-//            setEvents.stream()
-//                    .map( )
-//                    .toList();
-        } else {
-
-        }
-
-
-//        return  EventSimilarityAvro.newBuilder()
-//                .setEventA()
-//                .setEventB()
-//                .setScore()
-//                .setTimestamp(Instant.now())
-//                .build();
-        return List.of();
-    }
-
-    private Map<Long, Map<Long, Double>> calculateScore(long eventIdOne, UserActionAvro event) {
-        double newWeight = getWeightForAction(event.getActionType());
-
-        long eventMin = Math.min(eventIdOne, event.getEventId());
-        long eventMax = Math.max(eventIdOne, event.getEventId());
-
 //        // получаем преведущую оценку
 //        oldWeight = mapMaxEventUserWeight.computeIfAbsent(event.getEventId(), v -> new HashMap<>())
 //                .computeIfAbsent(event.getUserId(), v -> Double.valueOf(0));
@@ -147,12 +118,59 @@ public class EventSimilarityCollector {
 //        // разница весов
 //        deltaWeight = newWeight - oldWeight;
 
+
+        // новое не учтенное событие, пересчитываем
+//        if (!setEvents.contains(event.getEventId())) {
+//            mapEventSum.put(event.getEventId(), weight);
+        // пересчитываем коэфф для всех существующих событий
+        List<EventSimilarityAvro> eventList = setEvents.stream()
+                .filter(eventId -> eventId != event.getEventId())
+                .map(eventId -> calculateScore(eventId, event))
+                .filter(Optional::isPresent)
+                .map(optionalEventEventScope -> {
+                    Map<Long, Map<Long, Double>> mapEventEventScope = optionalEventEventScope.get();
+                    Long eventMin = mapEventEventScope.keySet().stream().findFirst().get();
+                    Long eventMax = mapEventEventScope.get(eventMin).keySet().stream().findFirst().get();
+
+                    return EventSimilarityAvro.newBuilder()
+                            .setEventA(eventMin)
+                            .setEventB(eventMax)
+                            .setScore(mapEventEventScope.get(eventMin).get(eventMax))
+                            .setTimestamp(Instant.now())
+                            .build();
+                })
+                .toList();
+//        } else {
+//
+//        }
+
+
+        mapMaxEventUserWeight.get(event.getEventId()).compute(event.getUserId(), (k, v) -> weight);
+        setEvents.add(event.getEventId());
+
+//        return  EventSimilarityAvro.newBuilder()
+//                .setEventA()
+//                .setEventB()
+//                .setScore()
+//                .setTimestamp(Instant.now())
+//                .build();
+
+
+        return eventList;
+    }
+
+    private Optional<Map<Long, Map<Long, Double>>> calculateScore(long eventIdOne, UserActionAvro event) {
+        double newWeight = getWeightForAction(event.getActionType());
+
+        long eventMin = Math.min(eventIdOne, event.getEventId());
+        long eventMax = Math.max(eventIdOne, event.getEventId());
+
         // преведущие максимальные веса оценок событий(Smin)
         double weigthEventMin = mapMaxEventUserWeight.computeIfAbsent(eventMin, v -> new HashMap<>())
-                .computeIfAbsent(event.getUserId(), v -> Double.valueOf(0));
+                .computeIfAbsent(event.getUserId(), v -> 0.0);
 
         double weigthEventMax = mapMaxEventUserWeight.computeIfAbsent(eventMax, v -> new HashMap<>())
-                .computeIfAbsent(event.getUserId(), v -> Double.valueOf(0));
+                .computeIfAbsent(event.getUserId(), v -> 0.0);
 
         // минимальный вес старых оценок
         double minOldWeigth = Math.min(weigthEventMin, weigthEventMax);
@@ -168,13 +186,13 @@ public class EventSimilarityCollector {
 
         // создадим, если нет
         Map<Long, Double> mapEventWeigth = mapMinEventEventWeight.computeIfAbsent(eventMin, v -> new HashMap<>());
-        mapEventWeigth.computeIfAbsent(eventMax, v -> Double.valueOf(0));
+        mapEventWeigth.computeIfAbsent(eventMax, v -> 0.0);
         // обновим общую сумму минимальных весов
         mapMinEventEventWeight.get(eventMin).compute(eventMax, (k, v) -> v + deltaMinWeigth);
 
         // пересчитаем сумму весов
-        double sumOldMinEventWeigth = mapEventSum.computeIfAbsent(eventMin, v -> Double.valueOf(0));
-        double sumOldMaxEventWeigth = mapEventSum.computeIfAbsent(eventMax, v -> Double.valueOf(0));
+        double sumOldMinEventWeigth = mapEventSum.computeIfAbsent(eventMin, v -> 0.0);
+        double sumOldMaxEventWeigth = mapEventSum.computeIfAbsent(eventMax, v -> 0.0);
 
         double deltaMaxWeigth;
         if (event.getEventId() == eventMin) {
@@ -187,17 +205,17 @@ public class EventSimilarityCollector {
 
         // занесем если есть
         mapEventEventScope.computeIfAbsent(eventMin, v -> new HashMap<>())
-                .computeIfAbsent(eventMax, k -> Double.valueOf(0));
+                .computeIfAbsent(eventMax, k -> 0.0);
 
         // пересчитаем коэффициенты если есть изменения
         if (deltaMinWeigth != 0 || deltaMaxWeigth != 0) {
             if (sumOldMinEventWeigth != 0 && sumOldMaxEventWeigth != 0) {
-                double scope =  minNewWeigth / ((Math.sqrt(sumOldMinEventWeigth) * Math.sqrt(sumOldMaxEventWeigth)));
+                double scope = minNewWeigth / ((Math.sqrt(sumOldMinEventWeigth) * Math.sqrt(sumOldMaxEventWeigth)));
                 mapEventEventScope.get(eventMin).compute(eventMax, (k, v) -> scope);
-                return Map.of(eventMin, mapEventEventScope.get(eventMin));
+                return Optional.of(Map.of(eventMin, mapEventEventScope.get(eventMin)));
             }
         }
 
-        return Map.of();
+        return Optional.empty();
     }
 }
