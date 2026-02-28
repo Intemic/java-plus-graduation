@@ -1,6 +1,7 @@
 package ru.practicum.stats.aggregator.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,22 +13,28 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.springframework.stereotype.Component;
+import ru.practicum.ewm.stats.avro.ActionTypeAvro;
 import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
 import ru.practicum.stats.aggregator.config.AggregatorConfig;
 import ru.practicum.stats.aggregator.kafka.KafkaClientImpl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class AggregationStarter {
     private static final int MAX_COUNT_PROCESSED_RECORDS = 10;
-    private final AggregatorConfig config;
-    private final KafkaClientImpl kafkaClient;
+    //private final AggregatorConfig config;
+    private AggregatorConfig config;
+    //private final KafkaClientImpl kafkaClient;
+    private KafkaClientImpl kafkaClient;
     private final ObjectMapper objectMapper;
     private EventSimilarityCollector eventCollector;
     private Map<TopicPartition, OffsetAndMetadata> currentOffsets = new HashMap<>();
@@ -104,5 +111,43 @@ public class AggregationStarter {
             });
 
         processedRecord++;
+    }
+
+    public void startTest() throws IOException {
+        String filePath = "test.txt";
+        List<UserActionAvro> list = new LinkedList<>();
+        eventCollector = new EventSimilarityCollector(objectMapper);
+
+        try (Stream<String> stream = Files.lines(Paths.get(filePath))) {
+            stream.forEach(line -> {
+                try {
+                    JsonNode node = objectMapper.readTree(line);
+//
+//                    String user = node.get("user").asText();
+//                    String event = node.get("event").asText();
+//                    String type = ;
+//                    String timestamp = node.get("timestamp").asText();
+//
+//                    Long userId = ();
+//                    ActionTypeAvro actionType = ActionTypeAvro.valueOf(type);
+//
+
+                    list.add(UserActionAvro.newBuilder()
+//                            .setUserId(node.get("user").longValue())
+//                            .setEventId(node.get("event").longValue())
+//                            .setActionType(actionType)
+//                            .setTimestamp(Instant.parse(timestamp))
+                            .setUserId(node.get("user").asLong())
+                            .setEventId(node.get("event").asLong())
+                            .setActionType(ActionTypeAvro.valueOf(node.get("type").asText().split("_")[1]))
+                            .setTimestamp(Instant.parse(node.get("timestamp").asText()))
+                            .build());
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            list.stream().forEach(event -> eventCollector.updateState(event));
+        }
     }
 }

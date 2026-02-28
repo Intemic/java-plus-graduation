@@ -1,0 +1,16 @@
+{"user": "9", "event": "2", "type": "ACTION_REGISTER", "timestamp": "2026-02-23T05:05:22.809076800Z"}
+{"user": "8", "event": "3", "type": "ACTION_REGISTER", "timestamp": "2026-02-23T05:09:03.774076800Z"}
+{"user": "1", "event": "8", "type": "ACTION_VIEW", "timestamp": "2026-02-23T05:11:23.161076800Z"}
+{"user": "6", "event": "4", "type": "ACTION_VIEW", "timestamp": "2026-02-23T05:16:37.047076800Z"}
+{"user": "3", "event": "14", "type": "ACTION_REGISTER", "timestamp": "2026-02-23T05:24:33.792076800Z"}
+{"user": "10", "event": "3", "type": "ACTION_VIEW", "timestamp": "2026-02-23T05:26:50.533076800Z"}
+{"user": "2", "event": "11", "type": "ACTION_VIEW", "timestamp": "2026-02-23T05:28:19.529076800Z"}
+{"user": "10", "event": "1", "type": "ACTION_REGISTER", "timestamp": "2026-02-23T05:34:02.997076800Z"}
+{"user": "6", "event": "2", "type": "ACTION_VIEW", "timestamp": "2026-02-23T05:37:05.540076800Z"}
+{"user": "8", "event": "8", "type": "ACTION_VIEW", "timestamp": "2026-02-23T05:46:58.171076800Z"}
+{"user": "5", "event": "15", "type": "ACTION_REGISTER", "timestamp": "2026-02-23T05:53:08.675076800Z"}
+{"user": "2", "event": "12", "type": "ACTION_VIEW", "timestamp": "2026-02-23T05:59:10.497076800Z"}
+{"user": "10", "event": "5", "type": "ACTION_REGISTER", "timestamp": "2026-02-23T06:00:49.588076800Z"}
+{"user": "4", "event": "7", "type": "ACTION_REGISTER", "timestamp": "2026-02-23T06:07:43.489076800Z"}
+{"user": "1", "event": "2", "type": "ACTION_REGISTER", "timestamp": "2026-02-23T06:13:36.384076800Z"}
+{"user": "7", "event": "3", "type": "ACTION_VIEW", "timestamp": "2026-02-23T06:21:37.819076800Z"}

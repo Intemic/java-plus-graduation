@@ -15,11 +15,12 @@ import static java.lang.Math.sqrt;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.RecursiveTask;
+import java.util.stream.Stream;
 
 @Slf4j
 public class EventSimilarityCollector {
     // перечень всех обработанных событий
-    private TreeSet<Long> setEvents = new TreeSet<>();
+ //   private TreeSet<Long> setEvents = new TreeSet<>();
     // ключи: User, Event, Weight, максимальный вес действия пользователя
     //  private Map<Long, Map<Long, Double>> mapUserEventMaxWeight = new HashMap<>();
     //    // ключи: Event, User, Weight, максимальный вес действия пользователя
@@ -29,7 +30,7 @@ public class EventSimilarityCollector {
     // ключи Event, Double коэфф для события
     private Map<Long, Double> mapEventSum = new HashMap<>();
     // ключи Event, Event, Double, коэфф похожести событий
-    private Map<Long, Map<Long, Double>> mapEventEventScope = new HashMap<>();
+    //private Map<Long, Map<Long, Double>> mapEventEventScope = new HashMap<>();
 
     private final ObjectMapper objectMapper;
 
@@ -64,6 +65,14 @@ public class EventSimilarityCollector {
                 .filter(entry -> entry.getKey().equals(event.getEventId())
                         && entry.getValue().containsKey(event.getUserId()))
                 .findFirst();
+
+//        Stream<Map.Entry<Long, Map<Long, Double>>> stream = mapEventUserMaxWeight.entrySet().stream();
+//        Optional<Map.Entry<Long, Map<Long, Double>>> eventUser = stream.filter(entry -> entry.getKey().equals(event.getEventId())
+//                && entry.getValue().containsKey(event.getUserId()))
+//                        .findFirst();
+
+
+
 
         if (eventUser.isPresent())
             oldWeight = eventUser.get().getValue().get(event.getUserId());
@@ -138,22 +147,47 @@ public class EventSimilarityCollector {
 //                })
 //                .toList();
 
-//        // новое не учтенное событие, пересчитываем
-//        if (!setEvents.contains(event.getEventId())) {
-            // сохраним полученные значения
+        // новое не учтенное событие, пересчитываем
+        if (!mapEventUserMaxWeight.containsKey(event.getEventId())) {
+          Set<Long> eventIds = mapEventUserMaxWeight.keySet();
+//
+//             сохраним полученные значения
 //            mapEventUserMaxWeight.computeIfAbsent(event.getEventId(), v -> new HashMap<>())
 //                    .computeIfAbsent(event.getUserId(), v -> 0.0);
 //
 //            mapEventUserMaxWeight.get(event.getEventId())
 //                    .compute(event.getUserId(), (k, v) -> getWeightForAction(event.getActionType()));
 
-            eventList = setEvents.stream()
+            mapEventUserMaxWeight.computeIfAbsent(event.getEventId(), k -> new HashMap<>())
+                    .compute(event.getUserId(), (userId, oldWeight) ->
+                            getWeightForAction(event.getActionType()));
+
+            eventList = eventIds.stream() //setEvents.stream()
 //                    .filter(eventId -> !eventId.equals(event.getEventId()))
+//                    .filter(eventId -> !eventId.equals(event.getEventId())
+//                            // пользователь должен был совершить действие со сравниванимым событием
+//                            && mapEventUserMaxWeight.get(eventId).containsKey(event.getUserId()))
+                    .map(eventId -> {
+                        log.info("Сравиваем события %s и %s".formatted(eventId, event.getEventId()));
+                        return createEventSimilarity(eventId, event.getEventId(), calculateScope(eventId, event.getEventId()));
+                    })
+                    .filter(Objects::nonNull)
+                    .toList();
+
+//            // обновим данные
+        } else {
+
+            // ищем старое значение для события
+            double oldMaxAvroWeight = mapEventUserMaxWeight.get(event.getEventId()).get(event.getUserId());
+            double newMaxAvroWeight = getWeightForAction(event.getActionType());
+            double deltaMaxWeight = newMaxAvroWeight - oldMaxAvroWeight;
+
+            eventList = mapEventUserMaxWeight.entrySet().stream() //.toList() setEvents.stream()
                     .filter(eventId -> !eventId.equals(event.getEventId())
                             // пользователь должен был совершить действие с сравниванимым событием
                             && mapEventUserMaxWeight.get(eventId).containsKey(event.getUserId()))
                     .map(eventId -> {
-                        double scope = calculateScope(eventId, event.getEventId());
+                        double scope = recalculateScope(eventId, event);
 
                         if (scope == 0.0)
                             return null;
@@ -163,30 +197,7 @@ public class EventSimilarityCollector {
                     .filter(Objects::nonNull)
                     .toList();
 
-//            // обновим данные
-//        } else {
-//
-//            // ищем старое значение для события
-//            double oldMaxAvroWeight = mapEventUserMaxWeight.get(event.getEventId()).get(event.getUserId());
-//            double newMaxAvroWeight = getWeightForAction(event.getActionType());
-//            double deltaMaxWeight = newMaxAvroWeight - oldMaxAvroWeight;
-//
-//            eventList = setEvents.stream()
-//                    .filter(eventId -> !eventId.equals(event.getEventId())
-//                            // пользователь должен был совершить действие с сравниванимым событием
-//                            && mapEventUserMaxWeight.get(eventId).containsKey(event.getUserId()))
-//                    .map(eventId -> {
-//                        double scope = recalculateScope(eventId, event);
-//
-//                        if (scope == 0.0)
-//                            return null;
-//
-//                        return createEventSimilarity(eventId, event.getEventId(), scope);
-//                    })
-//                    .filter(Objects::nonNull)
-//                    .toList();
-//
-//        }
+        }
 
         return eventList;
     }
@@ -258,9 +269,9 @@ public class EventSimilarityCollector {
         double weigth;
 
         if (mapEventUserMaxWeight.containsKey(eventId))
-            weigth = mapEventUserMaxWeight.get(eventId).values().stream()
+            weigth = round( mapEventUserMaxWeight.get(eventId).values().stream()
                     .mapToDouble(Double::doubleValue)
-                    .sum();
+                    .sum(), 1);
         else {
             weigth = 0.0;
         }
@@ -268,7 +279,7 @@ public class EventSimilarityCollector {
         mapEventSum.computeIfAbsent(eventId, k -> 0.0);
         mapEventSum.compute(eventId, (k, v) -> weigth);
 
-        log.info("Суммарный коэффициент для события %s равен %s".formatted(eventId, weigth));
+        log.info("Суммарный коэффициент для события %s = [%s]".formatted(eventId, weigth));
         return weigth;
     }
 
@@ -319,7 +330,7 @@ public class EventSimilarityCollector {
 
         mapEventUserMaxWeight.get(event.getEventId())
                 .compute(event.getUserId(), (k, v) -> getWeightForAction(event.getActionType()));
-        setEvents.add(event.getEventId());
+//        setEvents.add(event.getEventId());
     }
 
     private static double round(double value, int places) {
@@ -332,6 +343,10 @@ public class EventSimilarityCollector {
     }
 
     private EventSimilarityAvro createEventSimilarity(long eventIdOne, long eventIdTwo, double scope) {
+        // нет смысла
+        if (scope == 0.0)
+           return null;
+
         return EventSimilarityAvro.newBuilder()
                 .setEventA(min(eventIdOne, eventIdTwo))
                 .setEventB(max(eventIdOne, eventIdTwo))
@@ -371,6 +386,8 @@ public class EventSimilarityCollector {
             return round(smin / (sqrt(sOne) * sqrt(sTwo)), 2);
         }
 
-        return mapEventEventScope.get(eventMin).get(eventMax);
+
+        return null;
+        //return mapEventEventScope.get(eventMin).get(eventMax);
     }
 }
