@@ -6,14 +6,11 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ConfigurableApplicationContext;
 import ru.practicum.stats.aggregator.handler.AggregationStarter;
 
-import java.io.IOException;
-
 @SpringBootApplication
-//@ConfigurationPropertiesScan
+@ConfigurationPropertiesScan
 public class AggregatorApp {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(AggregatorApp.class, args);
-        //context.getBean(AggregationStarter.class).start();
-        context.getBean(AggregationStarter.class).startTest();
+        context.getBean(AggregationStarter.class).start();
     }
 }

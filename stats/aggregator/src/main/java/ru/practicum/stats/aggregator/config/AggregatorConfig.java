@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
-//@ConfigurationProperties("aggregator")
+@ConfigurationProperties("aggregator")
 public class AggregatorConfig {
     private KafkaConfig kafka;
 

@@ -18,7 +18,7 @@ import java.time.Duration;
 import java.util.Properties;
 
 @Slf4j
-//@Component
+@Component
 @RequiredArgsConstructor
 public class KafkaClientImpl implements KafkaClient {
     private final AggregatorConfig config;
