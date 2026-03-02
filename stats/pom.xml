@@ -18,6 +18,7 @@
         <module>stats-dto</module>
         <module>serialization</module>
         <module>aggregator</module>
+        <module>analyzer</module>
     </modules>
 
 </project>

@@ -1,0 +1,44 @@
+server:
+  port: 0
+
+grpc:
+  server:
+    port: 0
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+  datasource:
+    driverClassName: "org.postgresql.Driver"
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:8032/analyzer_db}
+    username: ${SPRING_DATASOURCE_USERNAME:main}
+    password: ${SPRING_DATASOURCE_PASSWORD:main}
+
+analyzer:
+  kafka:
+    server_config: "localhost:9092"
+    consumers:
+      user-actions:
+        key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+        value-deserializer: "ru.yandex.practicum.kafka.serialization.UserActionDeserializer"
+        group-id: "user-actions-consumer"
+        duration-millis: 1000
+        auto-offset-reset: "earliest"
+        topic: "stats.user-actions.v1"
+
+      events-similarity:
+        key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+        value-deserializer: "ru.yandex.practicum.kafka.serialization.EventSimilarityDeserializer"
+        group-id: "events-similarity-consumer"
+        duration-millis: 100
+        auto-offset-reset: "earliest"
+        topic: "stats.events-similarity.v1"

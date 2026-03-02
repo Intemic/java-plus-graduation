@@ -1,3 +1,4 @@
 CREATE DATABASE users_db;
 CREATE DATABASE requests_db;
 CREATE DATABASE events_db;
+CREATE DATABASE analyzer_db;
