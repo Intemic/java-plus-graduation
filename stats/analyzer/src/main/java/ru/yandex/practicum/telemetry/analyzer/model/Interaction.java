@@ -15,15 +15,15 @@ import java.time.LocalDate;
 public class Interaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @Column(name = "user_id")
-    private long userId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    @Column(name = "event_id")
-    private long eventId;
+    @Column(name = "event_id", nullable = false)
+    private Long eventId;
 
-    private double raiting;
+    private Double raiting;
 
     @Column(name = "time_stamp")
     private LocalDate timeStamp;

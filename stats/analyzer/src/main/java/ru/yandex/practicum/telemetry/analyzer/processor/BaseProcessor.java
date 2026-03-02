@@ -50,7 +50,7 @@ public abstract class BaseProcessor<K, V> {
                     fixOffset(record);
                 }
 
-                fixCommit();
+//                fixCommit();
             }
 
         } catch (WakeupException ignored) {
@@ -78,7 +78,7 @@ public abstract class BaseProcessor<K, V> {
 
     public abstract void fixOffset(ConsumerRecord<K, V> record);
 
-    public abstract void fixCommit();
+   // public abstract void fixCommit();
 
 }
 

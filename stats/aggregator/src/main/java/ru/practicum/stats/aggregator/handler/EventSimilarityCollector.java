@@ -42,12 +42,10 @@ public class EventSimilarityCollector {
             log.info("Пришло сообщение %s".formatted(event.toString()));
         }
 
-        if (needUpdating(event)) {
+        if (needUpdating(event))
             eventList = getEventsSimilarityAvro(event);
-//            updateStatistic(event);
-        } else {
+        else
             log.info("Данные события не изменились");
-        }
 
         log.info("<===================================end=====================================>");
 
@@ -211,16 +209,6 @@ public class EventSimilarityCollector {
         log.info(message + ", Smin - [%s], коэффициент похожести = [%s]".formatted(smin, scope));
         return scope;
     }
-
-//    private void updateStatistic(UserActionAvro event) {
-//        // сохраним полученные значения
-//        mapEventUserMaxWeight.computeIfAbsent(event.getEventId(), v -> new HashMap<>())
-//                .computeIfAbsent(event.getUserId(), v -> 0.0);
-//
-//        mapEventUserMaxWeight.get(event.getEventId())
-//                .compute(event.getUserId(), (k, v) -> getWeightForAction(event.getActionType()));
-////        setEvents.add(event.getEventId());
-//    }
 
     private static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
