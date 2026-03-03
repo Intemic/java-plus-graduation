@@ -5,6 +5,6 @@ import ru.yandex.practicum.telemetry.analyzer.model.Interaction;
 
 import java.util.Optional;
 
-public interface InteractionRepository extends JpaRepository<Long, Interaction> {
+public interface InteractionRepository extends JpaRepository<Interaction, Long> {
     Optional<Interaction> findByUserIdAndEventId(long userId, long eventId);
 }

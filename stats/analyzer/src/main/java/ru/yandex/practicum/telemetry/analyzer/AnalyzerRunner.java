@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.telemetry.analyzer.processor.EventsSimilarityProcessor;
-import ru.yandex.practicum.telemetry.analyzer.processor.HubEventProcessor;
-import ru.yandex.practicum.telemetry.analyzer.processor.SnapshotProcessor;
 import ru.yandex.practicum.telemetry.analyzer.processor.UserActionProcessor;
 
 @Component

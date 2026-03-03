@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS interactions (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id BIGINT NOT NULL,
     event_id BIGINT NOT NULL,
-    raiting FLOAT NOT NULL,
+    rating FLOAT NOT NULL,
     time_stamp TIMESTAMP WITH TIME ZONE NOT NULL,
     UNIQUE(user_id, event_id)
 );
@@ -13,5 +13,5 @@ CREATE TABLE IF NOT EXISTS similarities(
     event_b BIGINT NOT NULL,
     scope FLOAT NOT NULL,
     time_stamp TIMESTAMP WITH TIME ZONE NOT NULL,
-    UNIQUE(evetn_a, event_b)
+    UNIQUE(event_a, event_b)
 )

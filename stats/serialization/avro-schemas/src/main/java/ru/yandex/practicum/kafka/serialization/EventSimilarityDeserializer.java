@@ -4,7 +4,7 @@ import org.apache.avro.Schema;
 import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
 
 public class EventSimilarityDeserializer extends BaseAvroDeserializer<EventSimilarityAvro> {
-    public EventSimilarityDeserializer(Schema schema) {
+    public EventSimilarityDeserializer() {
         super(EventSimilarityAvro.getClassSchema());
     }
 }

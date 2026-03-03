@@ -1,9 +1,4 @@
-server:
-  port: 0
 
-grpc:
-  server:
-    port: 0
 
 spring:
   jpa:
@@ -42,3 +37,11 @@ analyzer:
         duration-millis: 100
         auto-offset-reset: "earliest"
         topic: "stats.events-similarity.v1"
+
+server:
+  port: 0
+
+grpc:
+  server:
+    port: 0
+

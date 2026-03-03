@@ -13,9 +13,11 @@ import java.util.Properties;
 
 @Slf4j
 public abstract class BaseProcessor<K, V> {
+    private final int MAX_COUNT_PROCESSED_RECORDS = 10;
     protected Consumer<K, V> consumer;
     private final KafkaConfig.KafkaConsumerConfig config;
     protected Map<TopicPartition, OffsetAndMetadata> currentOffsets = new HashMap<>();
+    protected int processedRecord;
 
     public BaseProcessor(String serverConfig, KafkaConfig.KafkaConsumerConfig consumerConfig) {
         config = consumerConfig;
@@ -49,8 +51,6 @@ public abstract class BaseProcessor<K, V> {
                     process(record);
                     fixOffset(record);
                 }
-
-//                fixCommit();
             }
 
         } catch (WakeupException ignored) {
@@ -76,9 +76,18 @@ public abstract class BaseProcessor<K, V> {
 
     public abstract void process(ConsumerRecord<K, V> record);
 
-    public abstract void fixOffset(ConsumerRecord<K, V> record);
+    public void fixOffset(ConsumerRecord<K, V> record) {
+        currentOffsets.put(new TopicPartition(record.topic(), record.partition()),
+                new OffsetAndMetadata(record.offset() + 1));
 
-   // public abstract void fixCommit();
+        if (processedRecord % MAX_COUNT_PROCESSED_RECORDS == 0)
+            consumer.commitAsync(currentOffsets, (offsets, exception) -> {
+                if (exception != null) {
+                    log.warn("Ошибка во время фиксации оффсетов: {}", offsets, exception);
+                }
+            });
 
+        processedRecord++;
+    }
 }
 

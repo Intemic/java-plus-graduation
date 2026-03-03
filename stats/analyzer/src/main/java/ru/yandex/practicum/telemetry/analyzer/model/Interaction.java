@@ -23,7 +23,7 @@ public class Interaction {
     @Column(name = "event_id", nullable = false)
     private Long eventId;
 
-    private Double raiting;
+    private Double rating;
 
     @Column(name = "time_stamp")
     private LocalDate timeStamp;
