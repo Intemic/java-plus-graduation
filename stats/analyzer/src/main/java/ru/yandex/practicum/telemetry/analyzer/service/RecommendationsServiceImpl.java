@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.stats.proto.InteractionsCountRequestProto;
@@ -12,6 +13,7 @@ import ru.practicum.ewm.stats.proto.RecommendedEventProto;
 import ru.practicum.ewm.stats.proto.SimilarEventsRequestProto;
 import ru.practicum.ewm.stats.proto.UserPredictionsRequestProto;
 import ru.yandex.practicum.telemetry.analyzer.model.Interaction;
+import ru.yandex.practicum.telemetry.analyzer.model.Similaritie;
 import ru.yandex.practicum.telemetry.analyzer.repository.InteractionRepository;
 import ru.yandex.practicum.telemetry.analyzer.repository.SimilaritieRepository;
 
@@ -34,6 +36,20 @@ public class RecommendationsServiceImpl implements RecommendationsService {
 
         log.info("Пришло событие - %s".formatted(convertToJson(request)));
 
+        // ищем с какими мероприятиями взаимодействовал в последнее время пользователь
+        List<Interaction> interactionList = interactionRepository
+                .findAllByUserIdOrderByTimeStampDesc(request.getUserId(),
+                        PageRequest.of(1, request.getMaxResults()));
+        if (!interactionList.isEmpty()) {
+
+
+            // получили похожие события которые пользователь еще не отметил
+            List<Long> evetnsId = interactionRepository
+                    .findAllByEventIdInAndUserIdNot(mapEvents.keySet(), request.getUserId()).stream()
+                    .map(Interaction::getEventId)
+                    .toList();
+        }
+
         process(listEvents, responseObserver);
     }
 
@@ -50,7 +66,7 @@ public class RecommendationsServiceImpl implements RecommendationsService {
                                 similaritie.getEventA()
                                         // ищем отличное от входящего событие
                                         .equals(request.getEventId()) ? similaritie.getEventB() : similaritie.getEventA(),
-                        similaritie -> similaritie.getScore()));
+                        Similaritie::getScore));
 
         if (!mapEvents.isEmpty()) {
             // получили похожие события которые пользователь еще не отметил
@@ -108,4 +124,7 @@ public class RecommendationsServiceImpl implements RecommendationsService {
             return object.toString();
         }
     }
+
+
+
 }

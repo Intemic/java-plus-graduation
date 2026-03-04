@@ -93,12 +93,17 @@ public class EventPublicController {
         return eventFullDto;
     }
 
+    @GetMapping("/recommendations")
+    public List<EventFullDto> getRecommendations(@RequestHeader("X-EWM-USER-ID") long userId) {
+        return eventService.getRecommendations(userId);
+    }
+
     @PutMapping("/{eventId}/like")
     public boolean likeEvent(@PathVariable @Positive long eventId,
-                                  @RequestHeader("X-EWM-USER-ID") long userId) {
-       boolean result = eventService.likeEvent(eventId, userId);
+                             @RequestHeader("X-EWM-USER-ID") long userId) {
+        boolean result = eventService.likeEvent(eventId, userId);
         if (result)
-           userActionClient.collectUserAction(userId, eventId, ActionTypeProto.ACTION_LIKE);
+            userActionClient.collectUserAction(userId, eventId, ActionTypeProto.ACTION_LIKE);
 
         return result;
     }

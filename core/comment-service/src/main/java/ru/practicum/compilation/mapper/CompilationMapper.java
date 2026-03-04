@@ -72,7 +72,7 @@ public class CompilationMapper {
                         .paid(event.getPaid())
                         .eventDate(event.getEventDate())
                         .confirmedRequests(event.getConfirmedRequests())
-                        .views(event.getViews())
+                        .rating(event.getRating())
                         .build(); })
                 .toList();
 

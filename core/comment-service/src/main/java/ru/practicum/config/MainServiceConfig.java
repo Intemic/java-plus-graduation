@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.support.RetryTemplate;
-import ru.practicum.client.StatsClient;
 
 @Configuration
 public class MainServiceConfig {
@@ -27,9 +26,4 @@ public class MainServiceConfig {
                 .build();
     }
 
-    @Bean
-    public StatsClient getStatClient(DiscoveryClient discoveryClient,
-                                     RetryTemplate retryTemplate) {
-        return new StatsClient(statsClientId, discoveryClient, retryTemplate);
-    }
 }

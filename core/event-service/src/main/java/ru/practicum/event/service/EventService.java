@@ -122,4 +122,6 @@ public interface EventService {
     List<EventFullDto> findAllByIdIn(List<Long> eventIds);
 
     boolean likeEvent(long eventId, long userId);
+
+    List<EventFullDto> getRecommendations(long userId);
 }

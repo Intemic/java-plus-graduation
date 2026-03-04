@@ -2,14 +2,14 @@ package ru.practicum.client;
 
 import com.google.protobuf.Timestamp;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.practicum.ewm.stats.proto.ActionTypeProto;
 import ru.practicum.ewm.stats.proto.UserActionControllerGrpc;
 import ru.practicum.ewm.stats.proto.UserActionProto;
 
 import java.time.Instant;
 
-@Component
+@Service
 public class UserActionClient {
     @GrpcClient("collector")
     UserActionControllerGrpc.UserActionControllerBlockingStub userActionController;

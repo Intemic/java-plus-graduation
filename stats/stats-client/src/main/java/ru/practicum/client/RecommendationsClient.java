@@ -1,14 +1,14 @@
 package ru.practicum.client;
 
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.practicum.ewm.stats.proto.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@Component
+@Service
 public class RecommendationsClient {
     @GrpcClient("analyzer")
     RecommendationsControllerGrpc.RecommendationsControllerBlockingStub recommendationsController;

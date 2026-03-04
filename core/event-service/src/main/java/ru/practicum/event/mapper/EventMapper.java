@@ -48,7 +48,7 @@ public class EventMapper {
                 .createdOn(LocalDateTime.now())
                 .state(EventState.PENDING)
                 .publishedOn(null)
-                .views(0L)
+                .rating(0.0)
                 .confirmedRequests(0L)
                 .build();
     }
@@ -85,7 +85,7 @@ public class EventMapper {
                 .createdOn(formatDateTime(event.getCreatedOn()))
                 .publishedOn(formatDateTime(event.getPublishedOn()))
                 .confirmedRequests(event.getConfirmedRequests())
-                .views(event.getViews())
+                .rating(event.getRating())
                 .build();
     }
 
@@ -111,7 +111,7 @@ public class EventMapper {
                 .paid(event.getPaid())
                 .eventDate(formatDateTime(event.getEventDate()))
                 .confirmedRequests(event.getConfirmedRequests())
-                .views(event.getViews())
+                .rating(event.getRating())
                 .build();
     }
 
@@ -162,12 +162,12 @@ public class EventMapper {
      *
      * @param event             сущность события
      * @param confirmedRequests количество подтвержденных запросов
-     * @param views             количество просмотров
+     * @param rating            рейтинг
      * @return DTO события
      */
     public static EventFullDto toEventFullDto(Event event,
                                               Long confirmedRequests,
-                                              Long views,
+                                              Double rating,
                                               Map<Long, UserDto> userDtoMap,
                                               Map<Long, CategoryDto> categoryDtoMap) {
         if (event == null) {
@@ -193,7 +193,7 @@ public class EventMapper {
                 .createdOn(formatDateTime(event.getCreatedOn()))
                 .publishedOn(formatDateTime(event.getPublishedOn()))
                 .confirmedRequests(confirmedRequests != null ? confirmedRequests : 0L)
-                .views(views != null ? views : 0L)
+                .rating(rating != null ? rating : 0.0)
                 .build();
     }
 
@@ -202,12 +202,12 @@ public class EventMapper {
      *
      * @param event             сущность события
      * @param confirmedRequests количество подтвержденных запросов
-     * @param views             количество просмотров
+     * @param rating            рейтинг
      * @return DTO краткого события
      */
     public static EventShortDto toEventShortDto(Event event,
                                                 Long confirmedRequests,
-                                                Long views,
+                                                Double rating,
                                                 Map<Long, UserDto> userDtoMap,
                                                 Map<Long, CategoryDto> categoryDtoMap) {
         if (event == null) {
@@ -223,7 +223,7 @@ public class EventMapper {
                 .paid(event.getPaid())
                 .eventDate(formatDateTime(event.getEventDate()))
                 .confirmedRequests(confirmedRequests != null ? confirmedRequests : 0L)
-                .views(views != null ? views : 0L)
+                .rating(rating != null ? rating : 0.0)
                 .build();
     }
 

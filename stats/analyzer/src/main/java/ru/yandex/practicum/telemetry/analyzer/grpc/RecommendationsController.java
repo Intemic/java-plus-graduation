@@ -9,7 +9,7 @@ import ru.yandex.practicum.telemetry.analyzer.service.RecommendationsService;
 @GrpcService
 @RequiredArgsConstructor
 public class RecommendationsController extends RecommendationsControllerGrpc.RecommendationsControllerImplBase {
-    private RecommendationsService service;
+    private final RecommendationsService service;
 
     @Override
     public void getRecommendationsForUser(UserPredictionsRequestProto request,
