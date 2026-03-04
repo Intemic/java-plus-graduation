@@ -7,5 +7,5 @@ option java_package = "ru.practicum.ewm.stats.proto";
 
 message RecommendedEventProto {
   int64 event_id = 1;  // идентификатор рекомендуемого мероприятия
-  float score = 2;     // либо предсказанная оценка, либо коэффициент сходства
+  double score = 2;     // либо предсказанная оценка, либо коэффициент сходства
 }

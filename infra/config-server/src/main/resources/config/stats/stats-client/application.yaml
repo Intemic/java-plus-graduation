@@ -1,6 +1,11 @@
 grpc:
   client:
     collector:
+      address: 'discovery:///collector' # адрес gRPC-сервиса
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
+    analyzer :
       address: 'discovery:///analyzer' # адрес gRPC-сервиса
       enableKeepAlive: true
       keepAliveWithoutCalls: true

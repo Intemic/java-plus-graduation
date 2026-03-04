@@ -43115,3 +43115,424 @@
 03/03/2026 - 20:29:37.967 YEKT -- Завершаю работу приложения
 --------------------------------
 Обнаружено 0 ошибок.
+--------------------------------
+Лог выполнения от 04/03/2026 - 15:48:09.564 YEKT
+--------------------------------
+04/03/2026 - 15:48:09.607 YEKT -- [Trace]: Сгенерирован следующий набор событий о действиях пользователей:
+{ user: 2, event: 12, type: ACTION_VIEW, timestamp: 2026-03-01T10:48:09.592423800Z }
+{ user: 7, event: 12, type: ACTION_REGISTER, timestamp: 2026-03-01T10:56:39.042423800Z }
+{ user: 1, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T10:59:42.768423800Z }
+{ user: 2, event: 4, type: ACTION_REGISTER, timestamp: 2026-03-01T11:02:26.698423800Z }
+{ user: 7, event: 9, type: ACTION_REGISTER, timestamp: 2026-03-01T11:11:33.644423800Z }
+{ user: 10, event: 12, type: ACTION_VIEW, timestamp: 2026-03-01T11:15:37.315423800Z }
+{ user: 2, event: 16, type: ACTION_REGISTER, timestamp: 2026-03-01T11:20:41.441423800Z }
+{ user: 7, event: 10, type: ACTION_VIEW, timestamp: 2026-03-01T11:25:29.834423800Z }
+{ user: 6, event: 8, type: ACTION_REGISTER, timestamp: 2026-03-01T11:31:39.004423800Z }
+{ user: 7, event: 4, type: ACTION_REGISTER, timestamp: 2026-03-01T11:33:35.716423800Z }
+{ user: 11, event: 5, type: ACTION_REGISTER, timestamp: 2026-03-01T11:41:13.652423800Z }
+{ user: 1, event: 13, type: ACTION_VIEW, timestamp: 2026-03-01T11:44:15.541423800Z }
+{ user: 11, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T11:45:48.721423800Z }
+{ user: 6, event: 12, type: ACTION_VIEW, timestamp: 2026-03-01T11:48:15.140423800Z }
+{ user: 8, event: 4, type: ACTION_REGISTER, timestamp: 2026-03-01T11:54:10.359423800Z }
+{ user: 9, event: 17, type: ACTION_VIEW, timestamp: 2026-03-01T12:00:20.562423800Z }
+{ user: 5, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T12:09:13.052423800Z }
+{ user: 6, event: 17, type: ACTION_VIEW, timestamp: 2026-03-01T12:13:41.484423800Z }
+{ user: 2, event: 3, type: ACTION_REGISTER, timestamp: 2026-03-01T12:17:59.710423800Z }
+{ user: 1, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T12:23:20.468423800Z }
+{ user: 10, event: 16, type: ACTION_REGISTER, timestamp: 2026-03-01T12:28:22.208423800Z }
+{ user: 7, event: 10, type: ACTION_REGISTER, timestamp: 2026-03-01T12:30:57.630423800Z }
+{ user: 6, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T12:32:10.922423800Z }
+{ user: 10, event: 5, type: ACTION_REGISTER, timestamp: 2026-03-01T12:40:57.292423800Z }
+{ user: 6, event: 8, type: ACTION_VIEW, timestamp: 2026-03-01T12:43:52.130423800Z }
+{ user: 4, event: 8, type: ACTION_VIEW, timestamp: 2026-03-01T12:51:42.546423800Z }
+{ user: 5, event: 4, type: ACTION_REGISTER, timestamp: 2026-03-01T13:00:36.741423800Z }
+{ user: 9, event: 8, type: ACTION_VIEW, timestamp: 2026-03-01T13:02:01.801423800Z }
+{ user: 2, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T13:06:46.153423800Z }
+{ user: 10, event: 10, type: ACTION_REGISTER, timestamp: 2026-03-01T13:07:49.921423800Z }
+{ user: 7, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T13:11:53.660423800Z }
+{ user: 9, event: 7, type: ACTION_VIEW, timestamp: 2026-03-01T13:18:52.938423800Z }
+{ user: 11, event: 17, type: ACTION_REGISTER, timestamp: 2026-03-01T13:23:16.581423800Z }
+{ user: 11, event: 8, type: ACTION_VIEW, timestamp: 2026-03-01T13:26:29.692423800Z }
+{ user: 9, event: 8, type: ACTION_REGISTER, timestamp: 2026-03-01T13:31:57.325423800Z }
+{ user: 5, event: 6, type: ACTION_REGISTER, timestamp: 2026-03-01T13:41:15.843423800Z }
+{ user: 4, event: 13, type: ACTION_VIEW, timestamp: 2026-03-01T13:48:18.663423800Z }
+{ user: 3, event: 2, type: ACTION_VIEW, timestamp: 2026-03-01T13:50:00.866423800Z }
+{ user: 4, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T13:52:02.641423800Z }
+{ user: 6, event: 17, type: ACTION_VIEW, timestamp: 2026-03-01T14:00:22.400423800Z }
+{ user: 10, event: 15, type: ACTION_REGISTER, timestamp: 2026-03-01T14:06:35.794423800Z }
+{ user: 7, event: 8, type: ACTION_VIEW, timestamp: 2026-03-01T14:15:09.511423800Z }
+{ user: 2, event: 4, type: ACTION_LIKE, timestamp: 2026-03-01T14:19:28.665423800Z }
+{ user: 5, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T14:25:52.339423800Z }
+{ user: 4, event: 2, type: ACTION_REGISTER, timestamp: 2026-03-01T14:28:27.786423800Z }
+{ user: 7, event: 2, type: ACTION_VIEW, timestamp: 2026-03-01T14:36:45.098423800Z }
+{ user: 4, event: 2, type: ACTION_VIEW, timestamp: 2026-03-01T14:44:09.598423800Z }
+{ user: 8, event: 14, type: ACTION_REGISTER, timestamp: 2026-03-01T14:51:27.476423800Z }
+{ user: 1, event: 3, type: ACTION_REGISTER, timestamp: 2026-03-01T14:59:59.702423800Z }
+{ user: 7, event: 17, type: ACTION_REGISTER, timestamp: 2026-03-01T15:05:36.734423800Z }
+{ user: 3, event: 14, type: ACTION_VIEW, timestamp: 2026-03-01T15:07:52.420423800Z }
+{ user: 3, event: 6, type: ACTION_REGISTER, timestamp: 2026-03-01T15:14:22.343423800Z }
+{ user: 3, event: 9, type: ACTION_REGISTER, timestamp: 2026-03-01T15:22:59.186423800Z }
+{ user: 11, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T15:24:45.033423800Z }
+{ user: 3, event: 2, type: ACTION_REGISTER, timestamp: 2026-03-01T15:32:09.028423800Z }
+{ user: 4, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T15:35:24.349423800Z }
+{ user: 10, event: 9, type: ACTION_REGISTER, timestamp: 2026-03-01T15:41:24.181423800Z }
+{ user: 9, event: 8, type: ACTION_LIKE, timestamp: 2026-03-01T15:43:24.626423800Z }
+{ user: 9, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T15:47:58.193423800Z }
+{ user: 6, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T15:51:07.252423800Z }
+{ user: 8, event: 10, type: ACTION_REGISTER, timestamp: 2026-03-01T15:55:41.211423800Z }
+{ user: 11, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T16:02:33.980423800Z }
+{ user: 1, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T16:06:29.976423800Z }
+{ user: 1, event: 10, type: ACTION_VIEW, timestamp: 2026-03-01T16:12:31.909423800Z }
+{ user: 3, event: 14, type: ACTION_REGISTER, timestamp: 2026-03-01T16:17:08.045423800Z }
+{ user: 4, event: 14, type: ACTION_REGISTER, timestamp: 2026-03-01T16:24:44.062423800Z }
+{ user: 5, event: 8, type: ACTION_VIEW, timestamp: 2026-03-01T16:30:46.578423800Z }
+{ user: 10, event: 11, type: ACTION_REGISTER, timestamp: 2026-03-01T16:34:56.569423800Z }
+{ user: 4, event: 11, type: ACTION_REGISTER, timestamp: 2026-03-01T16:36:41.986423800Z }
+{ user: 1, event: 11, type: ACTION_VIEW, timestamp: 2026-03-01T16:40:44.516423800Z }
+{ user: 6, event: 6, type: ACTION_REGISTER, timestamp: 2026-03-01T16:41:51.856423800Z }
+{ user: 6, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T16:45:16.220423800Z }
+{ user: 4, event: 14, type: ACTION_LIKE, timestamp: 2026-03-01T16:47:52.628423800Z }
+{ user: 9, event: 3, type: ACTION_REGISTER, timestamp: 2026-03-01T16:51:22.900423800Z }
+{ user: 6, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T16:54:50.677423800Z }
+{ user: 3, event: 10, type: ACTION_REGISTER, timestamp: 2026-03-01T16:59:06.398423800Z }
+{ user: 2, event: 10, type: ACTION_REGISTER, timestamp: 2026-03-01T17:04:07.297423800Z }
+{ user: 7, event: 12, type: ACTION_VIEW, timestamp: 2026-03-01T17:10:05.384423800Z }
+{ user: 8, event: 9, type: ACTION_REGISTER, timestamp: 2026-03-01T17:13:09.722423800Z }
+{ user: 8, event: 4, type: ACTION_LIKE, timestamp: 2026-03-01T17:15:42.596423800Z }
+{ user: 2, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T17:21:38.664423800Z }
+{ user: 9, event: 6, type: ACTION_REGISTER, timestamp: 2026-03-01T17:26:52.144423800Z }
+{ user: 6, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T17:29:08.330423800Z }
+{ user: 5, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T17:36:25.811423800Z }
+{ user: 9, event: 15, type: ACTION_VIEW, timestamp: 2026-03-01T17:44:40.089423800Z }
+{ user: 3, event: 17, type: ACTION_VIEW, timestamp: 2026-03-01T17:52:08.152423800Z }
+{ user: 4, event: 1, type: ACTION_REGISTER, timestamp: 2026-03-01T17:56:32.482423800Z }
+{ user: 5, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T18:02:14.904423800Z }
+{ user: 11, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T18:05:10.103423800Z }
+{ user: 7, event: 13, type: ACTION_REGISTER, timestamp: 2026-03-01T18:08:53.805423800Z }
+{ user: 3, event: 16, type: ACTION_VIEW, timestamp: 2026-03-01T18:17:09.826423800Z }
+{ user: 5, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T18:18:16.757423800Z }
+{ user: 10, event: 4, type: ACTION_REGISTER, timestamp: 2026-03-01T18:25:46.185423800Z }
+{ user: 4, event: 2, type: ACTION_LIKE, timestamp: 2026-03-01T18:29:47.137423800Z }
+{ user: 9, event: 13, type: ACTION_VIEW, timestamp: 2026-03-01T18:34:03.066423800Z }
+{ user: 2, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T18:42:42.133423800Z }
+{ user: 8, event: 16, type: ACTION_VIEW, timestamp: 2026-03-01T18:44:35.930423800Z }
+04/03/2026 - 15:48:09.611 YEKT -- Начинаю тестирование. Сгенерировано 97 событий
+04/03/2026 - 15:48:09.611 YEKT -- Начинаю верификацию сервиса Collector
+04/03/2026 - 15:48:09.613 YEKT -- Отправляю событие о действии пользователя: { user: 2, event: 12, type: ACTION_VIEW, timestamp: 2026-03-01T10:48:09.592423800Z }
+--------------------------------
+Обнаружено 0 ошибок.
+--------------------------------
+Лог выполнения от 04/03/2026 - 15:53:20.989 YEKT
+--------------------------------
+04/03/2026 - 15:53:21.058 YEKT -- [Trace]: Сгенерирован следующий набор событий о действиях пользователей:
+{ user: 1, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T10:53:21.043423100Z }
+{ user: 1, event: 8, type: ACTION_REGISTER, timestamp: 2026-03-01T10:57:55.216423100Z }
+{ user: 5, event: 16, type: ACTION_VIEW, timestamp: 2026-03-01T11:00:18.767423100Z }
+{ user: 2, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T11:02:41.421423100Z }
+{ user: 9, event: 15, type: ACTION_VIEW, timestamp: 2026-03-01T11:05:07.717423100Z }
+{ user: 5, event: 16, type: ACTION_VIEW, timestamp: 2026-03-01T11:08:51.475423100Z }
+{ user: 4, event: 13, type: ACTION_REGISTER, timestamp: 2026-03-01T11:10:53.697423100Z }
+{ user: 3, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T11:16:50.998423100Z }
+{ user: 5, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T11:17:55.289423100Z }
+{ user: 5, event: 12, type: ACTION_REGISTER, timestamp: 2026-03-01T11:20:33.004423100Z }
+{ user: 7, event: 13, type: ACTION_REGISTER, timestamp: 2026-03-01T11:22:24.851423100Z }
+{ user: 8, event: 16, type: ACTION_VIEW, timestamp: 2026-03-01T11:30:53.073423100Z }
+{ user: 4, event: 5, type: ACTION_REGISTER, timestamp: 2026-03-01T11:37:29.045423100Z }
+{ user: 5, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T11:44:07.900423100Z }
+{ user: 1, event: 4, type: ACTION_REGISTER, timestamp: 2026-03-01T11:53:45.195423100Z }
+{ user: 2, event: 15, type: ACTION_REGISTER, timestamp: 2026-03-01T12:01:59.660423100Z }
+{ user: 6, event: 14, type: ACTION_VIEW, timestamp: 2026-03-01T12:08:48.101423100Z }
+{ user: 7, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T12:16:38.763423100Z }
+{ user: 6, event: 10, type: ACTION_REGISTER, timestamp: 2026-03-01T12:25:47.013423100Z }
+{ user: 1, event: 1, type: ACTION_REGISTER, timestamp: 2026-03-01T12:30:09.889423100Z }
+{ user: 5, event: 12, type: ACTION_VIEW, timestamp: 2026-03-01T12:35:45.345423100Z }
+{ user: 2, event: 7, type: ACTION_VIEW, timestamp: 2026-03-01T12:40:10.097423100Z }
+{ user: 3, event: 13, type: ACTION_VIEW, timestamp: 2026-03-01T12:43:47.875423100Z }
+{ user: 7, event: 16, type: ACTION_VIEW, timestamp: 2026-03-01T12:49:49.090423100Z }
+{ user: 9, event: 12, type: ACTION_VIEW, timestamp: 2026-03-01T12:58:30.632423100Z }
+{ user: 7, event: 14, type: ACTION_REGISTER, timestamp: 2026-03-01T13:00:43.344423100Z }
+{ user: 8, event: 8, type: ACTION_REGISTER, timestamp: 2026-03-01T13:10:07.555423100Z }
+{ user: 9, event: 11, type: ACTION_VIEW, timestamp: 2026-03-01T13:14:07.171423100Z }
+{ user: 5, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T13:21:17.918423100Z }
+{ user: 4, event: 12, type: ACTION_VIEW, timestamp: 2026-03-01T13:23:24.544423100Z }
+{ user: 2, event: 10, type: ACTION_REGISTER, timestamp: 2026-03-01T13:31:50.665423100Z }
+{ user: 5, event: 5, type: ACTION_REGISTER, timestamp: 2026-03-01T13:36:14.714423100Z }
+{ user: 9, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T13:40:02.354423100Z }
+{ user: 6, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T13:45:39.398423100Z }
+{ user: 1, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T13:49:11.749423100Z }
+{ user: 5, event: 8, type: ACTION_REGISTER, timestamp: 2026-03-01T13:54:18.374423100Z }
+{ user: 6, event: 12, type: ACTION_REGISTER, timestamp: 2026-03-01T13:58:47.392423100Z }
+{ user: 9, event: 3, type: ACTION_REGISTER, timestamp: 2026-03-01T13:59:58.970423100Z }
+{ user: 8, event: 12, type: ACTION_REGISTER, timestamp: 2026-03-01T14:05:19.354423100Z }
+{ user: 4, event: 17, type: ACTION_REGISTER, timestamp: 2026-03-01T14:09:51.240423100Z }
+{ user: 8, event: 12, type: ACTION_VIEW, timestamp: 2026-03-01T14:17:49.262423100Z }
+{ user: 1, event: 13, type: ACTION_VIEW, timestamp: 2026-03-01T14:25:38.254423100Z }
+{ user: 7, event: 4, type: ACTION_REGISTER, timestamp: 2026-03-01T14:31:26.764423100Z }
+{ user: 4, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T14:36:33.876423100Z }
+{ user: 4, event: 9, type: ACTION_REGISTER, timestamp: 2026-03-01T14:45:50.829423100Z }
+{ user: 6, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T14:49:57.414423100Z }
+{ user: 1, event: 8, type: ACTION_LIKE, timestamp: 2026-03-01T14:52:39.402423100Z }
+{ user: 6, event: 9, type: ACTION_REGISTER, timestamp: 2026-03-01T14:55:49.311423100Z }
+{ user: 5, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T14:58:25.196423100Z }
+{ user: 1, event: 17, type: ACTION_REGISTER, timestamp: 2026-03-01T14:59:38.405423100Z }
+{ user: 1, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T15:09:25.229423100Z }
+{ user: 8, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T15:19:10.917423100Z }
+{ user: 9, event: 2, type: ACTION_VIEW, timestamp: 2026-03-01T15:22:35.111423100Z }
+{ user: 5, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T15:32:15.123423100Z }
+04/03/2026 - 15:53:21.063 YEKT -- Начинаю тестирование. Сгенерировано 54 событий
+04/03/2026 - 15:53:21.063 YEKT -- Начинаю верификацию сервиса Collector
+04/03/2026 - 15:53:21.063 YEKT -- Отправляю событие о действии пользователя: { user: 1, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T10:53:21.043423100Z }
+04/03/2026 - 15:53:22.958 YEKT -- [Trace]: Событие отправлено: { user: 1, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T10:53:21.043423100Z }
+04/03/2026 - 15:53:22.958 YEKT -- Ожидаю 10 секунд получения события { user: 1, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T10:53:21.043423100Z } из топика stats.user-actions.v1
+04/03/2026 - 15:53:23.373 YEKT -- [Trace]: Начинаю верификацию полученного события: { user: 1, event: 5, type: VIEW, timestamp: 2026-03-01T10:53:21.043Z }
+04/03/2026 - 15:53:23.374 YEKT -- Событие VIEW пользователя 1 с мероприятием 5 - проверено
+--------------------------------
+04/03/2026 - 15:53:23.375 YEKT -- Начинаю верификацию сервиса Aggregator. Рассчитываю обновления коэффициента схожести с другими мероприятиями
+04/03/2026 - 15:53:23.376 YEKT -- [Trace]: Тестер: это первое взаимодействие с мероприятием [5]. Рассчитываем коэффициенты схожести с другими мероприятиями.
+04/03/2026 - 15:53:23.378 YEKT -- Для данного действия обновления коэффициента схожести не требуется
+--------------------------------
+04/03/2026 - 15:53:24.388 YEKT -- Начинаю верификацию сервиса Analyzer
+--------------------------------
+--------------------------------
+04/03/2026 - 15:53:24.394 YEKT -- Отправляю gRPC-запрос на получение количества взаимодействий с мероприятием [5]
+--------------------------------
+Обнаружено 0 ошибок.
+--------------------------------
+Лог выполнения от 04/03/2026 - 15:53:52.821 YEKT
+--------------------------------
+04/03/2026 - 15:53:52.854 YEKT -- [Trace]: Сгенерирован следующий набор событий о действиях пользователей:
+{ user: 7, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T10:53:52.840712600Z }
+{ user: 6, event: 16, type: ACTION_REGISTER, timestamp: 2026-03-01T10:56:46.925712600Z }
+{ user: 7, event: 7, type: ACTION_VIEW, timestamp: 2026-03-01T11:03:29.290712600Z }
+{ user: 4, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T11:12:08.464712600Z }
+{ user: 7, event: 15, type: ACTION_VIEW, timestamp: 2026-03-01T11:16:07.069712600Z }
+{ user: 3, event: 10, type: ACTION_VIEW, timestamp: 2026-03-01T11:24:02.130712600Z }
+{ user: 4, event: 11, type: ACTION_REGISTER, timestamp: 2026-03-01T11:28:04.854712600Z }
+{ user: 6, event: 14, type: ACTION_VIEW, timestamp: 2026-03-01T11:35:04.604712600Z }
+{ user: 2, event: 12, type: ACTION_REGISTER, timestamp: 2026-03-01T11:36:36.292712600Z }
+{ user: 2, event: 2, type: ACTION_REGISTER, timestamp: 2026-03-01T11:39:59.851712600Z }
+{ user: 7, event: 14, type: ACTION_VIEW, timestamp: 2026-03-01T11:47:58.500712600Z }
+{ user: 7, event: 5, type: ACTION_REGISTER, timestamp: 2026-03-01T11:55:31.906712600Z }
+{ user: 1, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T11:56:52.297712600Z }
+{ user: 3, event: 2, type: ACTION_REGISTER, timestamp: 2026-03-01T11:58:48.704712600Z }
+{ user: 4, event: 15, type: ACTION_VIEW, timestamp: 2026-03-01T12:07:54.730712600Z }
+{ user: 7, event: 1, type: ACTION_REGISTER, timestamp: 2026-03-01T12:17:34.475712600Z }
+{ user: 4, event: 1, type: ACTION_REGISTER, timestamp: 2026-03-01T12:18:54.108712600Z }
+{ user: 3, event: 18, type: ACTION_REGISTER, timestamp: 2026-03-01T12:21:28.369712600Z }
+{ user: 3, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T12:28:00.064712600Z }
+{ user: 3, event: 4, type: ACTION_REGISTER, timestamp: 2026-03-01T12:32:12.263712600Z }
+{ user: 1, event: 16, type: ACTION_VIEW, timestamp: 2026-03-01T12:37:44.581712600Z }
+{ user: 2, event: 13, type: ACTION_VIEW, timestamp: 2026-03-01T12:43:32.070712600Z }
+{ user: 7, event: 13, type: ACTION_VIEW, timestamp: 2026-03-01T12:51:43.476712600Z }
+{ user: 3, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T12:57:16.116712600Z }
+{ user: 5, event: 12, type: ACTION_REGISTER, timestamp: 2026-03-01T13:03:21.639712600Z }
+{ user: 2, event: 14, type: ACTION_REGISTER, timestamp: 2026-03-01T13:04:40.339712600Z }
+{ user: 3, event: 12, type: ACTION_VIEW, timestamp: 2026-03-01T13:06:50.827712600Z }
+{ user: 7, event: 13, type: ACTION_REGISTER, timestamp: 2026-03-01T13:11:26.810712600Z }
+{ user: 1, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T13:21:00.139712600Z }
+{ user: 3, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T13:30:25.287712600Z }
+{ user: 4, event: 17, type: ACTION_REGISTER, timestamp: 2026-03-01T13:36:32.754712600Z }
+{ user: 6, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T13:42:43.397712600Z }
+{ user: 1, event: 17, type: ACTION_VIEW, timestamp: 2026-03-01T13:52:24.696712600Z }
+{ user: 1, event: 16, type: ACTION_REGISTER, timestamp: 2026-03-01T13:59:50.801712600Z }
+{ user: 2, event: 2, type: ACTION_VIEW, timestamp: 2026-03-01T14:09:16.851712600Z }
+{ user: 4, event: 18, type: ACTION_VIEW, timestamp: 2026-03-01T14:12:58.841712600Z }
+{ user: 5, event: 10, type: ACTION_REGISTER, timestamp: 2026-03-01T14:18:41.436712600Z }
+{ user: 3, event: 6, type: ACTION_REGISTER, timestamp: 2026-03-01T14:25:04.602712600Z }
+{ user: 3, event: 12, type: ACTION_VIEW, timestamp: 2026-03-01T14:30:15.431712600Z }
+{ user: 6, event: 18, type: ACTION_REGISTER, timestamp: 2026-03-01T14:40:00.552712600Z }
+{ user: 3, event: 16, type: ACTION_REGISTER, timestamp: 2026-03-01T14:48:08.971712600Z }
+{ user: 3, event: 4, type: ACTION_LIKE, timestamp: 2026-03-01T14:57:25.915712600Z }
+{ user: 6, event: 7, type: ACTION_VIEW, timestamp: 2026-03-01T15:00:08.659712600Z }
+{ user: 5, event: 15, type: ACTION_VIEW, timestamp: 2026-03-01T15:01:16.412712600Z }
+{ user: 1, event: 11, type: ACTION_REGISTER, timestamp: 2026-03-01T15:07:30.745712600Z }
+{ user: 7, event: 15, type: ACTION_REGISTER, timestamp: 2026-03-01T15:08:30.996712600Z }
+{ user: 6, event: 8, type: ACTION_REGISTER, timestamp: 2026-03-01T15:13:27.645712600Z }
+{ user: 7, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T15:20:18.674712600Z }
+{ user: 3, event: 17, type: ACTION_REGISTER, timestamp: 2026-03-01T15:24:02.846712600Z }
+{ user: 3, event: 18, type: ACTION_VIEW, timestamp: 2026-03-01T15:33:34.535712600Z }
+{ user: 5, event: 1, type: ACTION_REGISTER, timestamp: 2026-03-01T15:42:20.635712600Z }
+{ user: 5, event: 7, type: ACTION_VIEW, timestamp: 2026-03-01T15:45:46.194712600Z }
+{ user: 4, event: 2, type: ACTION_REGISTER, timestamp: 2026-03-01T15:52:20.053712600Z }
+{ user: 2, event: 6, type: ACTION_REGISTER, timestamp: 2026-03-01T15:53:38.312712600Z }
+{ user: 5, event: 2, type: ACTION_REGISTER, timestamp: 2026-03-01T15:59:41.835712600Z }
+{ user: 7, event: 18, type: ACTION_VIEW, timestamp: 2026-03-01T16:09:11.942712600Z }
+{ user: 5, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T16:16:27.112712600Z }
+{ user: 7, event: 13, type: ACTION_VIEW, timestamp: 2026-03-01T16:19:32.192712600Z }
+{ user: 7, event: 7, type: ACTION_VIEW, timestamp: 2026-03-01T16:27:32.319712600Z }
+{ user: 1, event: 1, type: ACTION_REGISTER, timestamp: 2026-03-01T16:32:18.188712600Z }
+{ user: 7, event: 4, type: ACTION_REGISTER, timestamp: 2026-03-01T16:37:45.591712600Z }
+{ user: 5, event: 17, type: ACTION_VIEW, timestamp: 2026-03-01T16:44:24.476712600Z }
+{ user: 4, event: 13, type: ACTION_REGISTER, timestamp: 2026-03-01T16:53:48.188712600Z }
+{ user: 2, event: 5, type: ACTION_REGISTER, timestamp: 2026-03-01T16:54:48.217712600Z }
+{ user: 3, event: 10, type: ACTION_REGISTER, timestamp: 2026-03-01T16:57:06.555712600Z }
+{ user: 5, event: 18, type: ACTION_VIEW, timestamp: 2026-03-01T16:58:11.827712600Z }
+{ user: 4, event: 17, type: ACTION_LIKE, timestamp: 2026-03-01T17:05:41.629712600Z }
+{ user: 7, event: 8, type: ACTION_REGISTER, timestamp: 2026-03-01T17:08:15.220712600Z }
+{ user: 1, event: 14, type: ACTION_VIEW, timestamp: 2026-03-01T17:12:33.740712600Z }
+{ user: 7, event: 10, type: ACTION_VIEW, timestamp: 2026-03-01T17:14:10.527712600Z }
+{ user: 4, event: 2, type: ACTION_LIKE, timestamp: 2026-03-01T17:22:54.360712600Z }
+{ user: 4, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T17:30:53.557712600Z }
+{ user: 7, event: 18, type: ACTION_REGISTER, timestamp: 2026-03-01T17:37:54.617712600Z }
+{ user: 7, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T17:43:58.094712600Z }
+{ user: 7, event: 18, type: ACTION_LIKE, timestamp: 2026-03-01T17:49:09.702712600Z }
+{ user: 4, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T17:55:32.820712600Z }
+{ user: 1, event: 2, type: ACTION_REGISTER, timestamp: 2026-03-01T17:58:19.248712600Z }
+{ user: 1, event: 18, type: ACTION_VIEW, timestamp: 2026-03-01T18:07:54.303712600Z }
+{ user: 5, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T18:15:09.250712600Z }
+{ user: 1, event: 1, type: ACTION_LIKE, timestamp: 2026-03-01T18:17:21.020712600Z }
+{ user: 5, event: 7, type: ACTION_VIEW, timestamp: 2026-03-01T18:19:20.372712600Z }
+{ user: 2, event: 8, type: ACTION_VIEW, timestamp: 2026-03-01T18:22:40.108712600Z }
+{ user: 4, event: 6, type: ACTION_REGISTER, timestamp: 2026-03-01T18:29:54.830712600Z }
+{ user: 1, event: 7, type: ACTION_VIEW, timestamp: 2026-03-01T18:35:32.794712600Z }
+04/03/2026 - 15:53:52.857 YEKT -- Начинаю тестирование. Сгенерировано 84 событий
+04/03/2026 - 15:53:52.857 YEKT -- Начинаю верификацию сервиса Collector
+04/03/2026 - 15:53:52.857 YEKT -- Отправляю событие о действии пользователя: { user: 7, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T10:53:52.840712600Z }
+04/03/2026 - 15:53:54.031 YEKT -- [Trace]: Событие отправлено: { user: 7, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T10:53:52.840712600Z }
+04/03/2026 - 15:53:54.031 YEKT -- Ожидаю 10 секунд получения события { user: 7, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T10:53:52.840712600Z } из топика stats.user-actions.v1
+04/03/2026 - 15:54:04.043 YEKT -- [Ошибка]: В течении 10 секунд событие о действии ACTION_REGISTER из топика stats.user-actions.v1 не было получено
+Совет: 
+Проверьте сервис Collector - удостоверьтесь, что он реализует gRPC сервис, а также корректно принимает сообщения о действиях пользователей и сохраняет их в топик Kafka - stats.user-actions.v1
+Убедитесь, что сервис Collector доступен как collector 
+04/03/2026 - 15:54:04.043 YEKT -- Верификация для события закончена: { user: 7, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T10:53:52.840712600Z }
+--------------------------------
+--------------------------------
+04/03/2026 - 15:54:04.043 YEKT -- Начинаю верификацию сервиса Collector
+04/03/2026 - 15:54:04.043 YEKT -- Отправляю событие о действии пользователя: { user: 6, event: 16, type: ACTION_REGISTER, timestamp: 2026-03-01T10:56:46.925712600Z }
+04/03/2026 - 15:54:04.053 YEKT -- [Trace]: Событие отправлено: { user: 6, event: 16, type: ACTION_REGISTER, timestamp: 2026-03-01T10:56:46.925712600Z }
+04/03/2026 - 15:54:04.053 YEKT -- Ожидаю 10 секунд получения события { user: 6, event: 16, type: ACTION_REGISTER, timestamp: 2026-03-01T10:56:46.925712600Z } из топика stats.user-actions.v1
+04/03/2026 - 15:54:08.481 YEKT -- [Trace]: Начинаю верификацию полученного события: { user: 7, event: 7, type: REGISTER, timestamp: 2026-03-01T10:53:52.840Z }
+04/03/2026 - 15:54:08.481 YEKT -- [Ошибка]: Поле userId: ожидалось [6], получено [7]
+                                 
+04/03/2026 - 15:54:08.481 YEKT -- [Ошибка]: Поле eventId: ожидалось [16], получено [7]
+                                 
+04/03/2026 - 15:54:08.481 YEKT -- [Ошибка]: Поле timestamp: ожидалось [01/03/2026 - 15:56:46.925 YEKT], получено [01/03/2026 - 15:53:52.840 YEKT]
+                                 
+04/03/2026 - 15:54:08.481 YEKT -- Событие REGISTER пользователя 7 с мероприятием 7 - проверено
+--------------------------------
+04/03/2026 - 15:54:08.483 YEKT -- Начинаю верификацию сервиса Aggregator. Рассчитываю обновления коэффициента схожести с другими мероприятиями
+04/03/2026 - 15:54:08.483 YEKT -- [Trace]: Тестер: это первое взаимодействие с мероприятием [16]. Рассчитываем коэффициенты схожести с другими мероприятиями.
+04/03/2026 - 15:54:08.485 YEKT -- Для данного действия обновления коэффициента схожести не требуется
+--------------------------------
+04/03/2026 - 15:54:09.498 YEKT -- Начинаю верификацию сервиса Analyzer
+--------------------------------
+--------------------------------
+04/03/2026 - 15:54:09.500 YEKT -- Отправляю gRPC-запрос на получение количества взаимодействий с мероприятием [16]
+--------------------------------
+Обнаружено 4 ошибок.
+--------------------------------
+Лог выполнения от 04/03/2026 - 15:55:39.972 YEKT
+--------------------------------
+04/03/2026 - 15:55:40.013 YEKT -- [Trace]: Сгенерирован следующий набор событий о действиях пользователей:
+{ user: 10, event: 10, type: ACTION_VIEW, timestamp: 2026-03-01T10:55:40.002526400Z }
+{ user: 9, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T10:57:54.484526400Z }
+{ user: 14, event: 2, type: ACTION_VIEW, timestamp: 2026-03-01T10:59:31.396526400Z }
+{ user: 5, event: 8, type: ACTION_VIEW, timestamp: 2026-03-01T11:00:53.411526400Z }
+{ user: 11, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T11:08:40.504526400Z }
+{ user: 10, event: 2, type: ACTION_REGISTER, timestamp: 2026-03-01T11:12:53.131526400Z }
+{ user: 13, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T11:19:08.063526400Z }
+{ user: 11, event: 2, type: ACTION_REGISTER, timestamp: 2026-03-01T11:24:23.767526400Z }
+{ user: 7, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T11:28:47.137526400Z }
+{ user: 10, event: 8, type: ACTION_REGISTER, timestamp: 2026-03-01T11:37:44.778526400Z }
+{ user: 12, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T11:43:39.282526400Z }
+{ user: 2, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T11:46:15.834526400Z }
+{ user: 9, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T11:50:56.593526400Z }
+{ user: 4, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T11:53:18.780526400Z }
+{ user: 11, event: 2, type: ACTION_LIKE, timestamp: 2026-03-01T11:55:12.613526400Z }
+{ user: 14, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T12:04:31.643526400Z }
+{ user: 14, event: 2, type: ACTION_REGISTER, timestamp: 2026-03-01T12:13:37.587526400Z }
+{ user: 13, event: 5, type: ACTION_REGISTER, timestamp: 2026-03-01T12:20:03.425526400Z }
+{ user: 8, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T12:27:44.457526400Z }
+{ user: 5, event: 3, type: ACTION_REGISTER, timestamp: 2026-03-01T12:35:30.084526400Z }
+{ user: 5, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T12:40:28.211526400Z }
+{ user: 2, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T12:43:21.377526400Z }
+{ user: 1, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T12:50:04.072526400Z }
+{ user: 14, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T12:52:14.689526400Z }
+{ user: 10, event: 6, type: ACTION_REGISTER, timestamp: 2026-03-01T12:54:21.567526400Z }
+{ user: 11, event: 9, type: ACTION_REGISTER, timestamp: 2026-03-01T12:55:34.328526400Z }
+{ user: 8, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T12:56:49.932526400Z }
+{ user: 13, event: 10, type: ACTION_REGISTER, timestamp: 2026-03-01T13:04:59.203526400Z }
+{ user: 4, event: 4, type: ACTION_REGISTER, timestamp: 2026-03-01T13:07:07.782526400Z }
+{ user: 8, event: 9, type: ACTION_REGISTER, timestamp: 2026-03-01T13:14:37.612526400Z }
+{ user: 7, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T13:16:30.286526400Z }
+{ user: 7, event: 10, type: ACTION_VIEW, timestamp: 2026-03-01T13:23:44.934526400Z }
+{ user: 13, event: 5, type: ACTION_LIKE, timestamp: 2026-03-01T13:29:05.908526400Z }
+{ user: 9, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T13:38:36.049526400Z }
+{ user: 1, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T13:48:33.010526400Z }
+{ user: 14, event: 4, type: ACTION_REGISTER, timestamp: 2026-03-01T13:50:23.514526400Z }
+{ user: 5, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T13:53:36.806526400Z }
+{ user: 4, event: 8, type: ACTION_REGISTER, timestamp: 2026-03-01T14:00:39.121526400Z }
+{ user: 10, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T14:01:47.697526400Z }
+{ user: 14, event: 9, type: ACTION_REGISTER, timestamp: 2026-03-01T14:10:24.348526400Z }
+{ user: 1, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T14:17:52.016526400Z }
+{ user: 7, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T14:22:46.514526400Z }
+{ user: 11, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T14:32:20.425526400Z }
+{ user: 1, event: 2, type: ACTION_REGISTER, timestamp: 2026-03-01T14:34:30.271526400Z }
+{ user: 13, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T14:36:16.696526400Z }
+{ user: 6, event: 3, type: ACTION_REGISTER, timestamp: 2026-03-01T14:40:51.654526400Z }
+{ user: 6, event: 3, type: ACTION_LIKE, timestamp: 2026-03-01T14:49:06.721526400Z }
+{ user: 12, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T14:58:15.799526400Z }
+{ user: 9, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T15:04:40.502526400Z }
+{ user: 5, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T15:12:31.479526400Z }
+{ user: 7, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T15:16:59.379526400Z }
+{ user: 12, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T15:26:47.207526400Z }
+{ user: 10, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T15:35:19.677526400Z }
+{ user: 13, event: 8, type: ACTION_VIEW, timestamp: 2026-03-01T15:42:58.261526400Z }
+{ user: 2, event: 1, type: ACTION_REGISTER, timestamp: 2026-03-01T15:49:07.820526400Z }
+{ user: 3, event: 7, type: ACTION_VIEW, timestamp: 2026-03-01T15:51:48.509526400Z }
+{ user: 3, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T15:57:12.705526400Z }
+{ user: 7, event: 6, type: ACTION_REGISTER, timestamp: 2026-03-01T16:06:58.309526400Z }
+{ user: 3, event: 6, type: ACTION_REGISTER, timestamp: 2026-03-01T16:09:15.942526400Z }
+{ user: 6, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T16:14:16.209526400Z }
+{ user: 9, event: 2, type: ACTION_VIEW, timestamp: 2026-03-01T16:16:18.661526400Z }
+{ user: 7, event: 1, type: ACTION_REGISTER, timestamp: 2026-03-01T16:20:39.007526400Z }
+{ user: 2, event: 2, type: ACTION_REGISTER, timestamp: 2026-03-01T16:30:13.962526400Z }
+{ user: 10, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T16:33:22.391526400Z }
+{ user: 2, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T16:37:52.440526400Z }
+{ user: 13, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T16:43:48.432526400Z }
+{ user: 3, event: 8, type: ACTION_REGISTER, timestamp: 2026-03-01T16:51:50.870526400Z }
+{ user: 2, event: 3, type: ACTION_VIEW, timestamp: 2026-03-01T16:54:06.319526400Z }
+{ user: 5, event: 10, type: ACTION_VIEW, timestamp: 2026-03-01T16:55:33.207526400Z }
+{ user: 14, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T17:00:50.286526400Z }
+{ user: 5, event: 4, type: ACTION_VIEW, timestamp: 2026-03-01T17:07:49.606526400Z }
+{ user: 14, event: 9, type: ACTION_LIKE, timestamp: 2026-03-01T17:11:51.953526400Z }
+{ user: 12, event: 10, type: ACTION_VIEW, timestamp: 2026-03-01T17:13:19.015526400Z }
+{ user: 11, event: 7, type: ACTION_REGISTER, timestamp: 2026-03-01T17:22:50.700526400Z }
+{ user: 13, event: 3, type: ACTION_REGISTER, timestamp: 2026-03-01T17:30:53.071526400Z }
+{ user: 5, event: 1, type: ACTION_REGISTER, timestamp: 2026-03-01T17:38:59.948526400Z }
+{ user: 9, event: 10, type: ACTION_VIEW, timestamp: 2026-03-01T17:43:35.061526400Z }
+{ user: 10, event: 6, type: ACTION_LIKE, timestamp: 2026-03-01T17:48:49.258526400Z }
+{ user: 14, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T17:54:01.973526400Z }
+{ user: 10, event: 7, type: ACTION_VIEW, timestamp: 2026-03-01T18:00:37.653526400Z }
+{ user: 1, event: 2, type: ACTION_VIEW, timestamp: 2026-03-01T18:09:23.744526400Z }
+{ user: 7, event: 6, type: ACTION_LIKE, timestamp: 2026-03-01T18:15:00.920526400Z }
+{ user: 7, event: 1, type: ACTION_LIKE, timestamp: 2026-03-01T18:16:25.246526400Z }
+{ user: 13, event: 8, type: ACTION_REGISTER, timestamp: 2026-03-01T18:25:31.429526400Z }
+{ user: 13, event: 5, type: ACTION_VIEW, timestamp: 2026-03-01T18:29:03.052526400Z }
+{ user: 12, event: 6, type: ACTION_REGISTER, timestamp: 2026-03-01T18:31:24.936526400Z }
+{ user: 7, event: 10, type: ACTION_REGISTER, timestamp: 2026-03-01T18:34:54.609526400Z }
+{ user: 7, event: 2, type: ACTION_VIEW, timestamp: 2026-03-01T18:39:07.564526400Z }
+{ user: 9, event: 1, type: ACTION_VIEW, timestamp: 2026-03-01T18:47:03.274526400Z }
+{ user: 13, event: 6, type: ACTION_VIEW, timestamp: 2026-03-01T18:55:20.840526400Z }
+{ user: 1, event: 10, type: ACTION_REGISTER, timestamp: 2026-03-01T18:58:20.036526400Z }
+{ user: 10, event: 9, type: ACTION_REGISTER, timestamp: 2026-03-01T19:03:06.922526400Z }
+{ user: 7, event: 2, type: ACTION_VIEW, timestamp: 2026-03-01T19:10:00.039526400Z }
+{ user: 12, event: 9, type: ACTION_VIEW, timestamp: 2026-03-01T19:17:38.279526400Z }
+04/03/2026 - 15:55:40.015 YEKT -- Начинаю тестирование. Сгенерировано 94 событий
+04/03/2026 - 15:55:40.015 YEKT -- Начинаю верификацию сервиса Collector
+04/03/2026 - 15:55:40.015 YEKT -- Отправляю событие о действии пользователя: { user: 10, event: 10, type: ACTION_VIEW, timestamp: 2026-03-01T10:55:40.002526400Z }
+04/03/2026 - 15:55:41.421 YEKT -- [Trace]: Событие отправлено: { user: 10, event: 10, type: ACTION_VIEW, timestamp: 2026-03-01T10:55:40.002526400Z }
+04/03/2026 - 15:55:41.421 YEKT -- Ожидаю 10 секунд получения события { user: 10, event: 10, type: ACTION_VIEW, timestamp: 2026-03-01T10:55:40.002526400Z } из топика stats.user-actions.v1
+04/03/2026 - 15:55:41.777 YEKT -- [Trace]: Начинаю верификацию полученного события: { user: 10, event: 10, type: VIEW, timestamp: 2026-03-01T10:55:40.002Z }
+04/03/2026 - 15:55:41.778 YEKT -- Событие VIEW пользователя 10 с мероприятием 10 - проверено
+--------------------------------
+04/03/2026 - 15:55:41.780 YEKT -- Начинаю верификацию сервиса Aggregator. Рассчитываю обновления коэффициента схожести с другими мероприятиями
+04/03/2026 - 15:55:41.781 YEKT -- [Trace]: Тестер: это первое взаимодействие с мероприятием [10]. Рассчитываем коэффициенты схожести с другими мероприятиями.
+04/03/2026 - 15:55:41.783 YEKT -- Для данного действия обновления коэффициента схожести не требуется
+--------------------------------
+04/03/2026 - 15:55:42.796 YEKT -- Начинаю верификацию сервиса Analyzer
+--------------------------------
+--------------------------------
+04/03/2026 - 15:55:42.805 YEKT -- Отправляю gRPC-запрос на получение количества взаимодействий с мероприятием [10]
+--------------------------------
+Обнаружено 0 ошибок.
