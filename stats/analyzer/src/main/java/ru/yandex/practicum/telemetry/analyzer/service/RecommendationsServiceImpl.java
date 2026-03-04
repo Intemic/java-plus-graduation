@@ -30,7 +30,11 @@ public class RecommendationsServiceImpl implements RecommendationsService {
     @Override
     public void getRecommendationsForUser(UserPredictionsRequestProto request,
                                           StreamObserver<RecommendedEventProto> responseObserver) {
+        List<RecommendedEventProto> listEvents = List.of();
 
+        log.info("Пришло событие - %s".formatted(convertToJson(request)));
+
+        process(listEvents, responseObserver);
     }
 
     @Override
