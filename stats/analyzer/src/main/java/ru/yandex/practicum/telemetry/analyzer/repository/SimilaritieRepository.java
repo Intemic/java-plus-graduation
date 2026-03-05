@@ -11,4 +11,7 @@ public interface SimilaritieRepository extends JpaRepository<Similaritie, Long> 
     Optional<Similaritie> findByEventAAndEventB(long eventA, long eventB);
 
     List<Similaritie> findAllByEventAOrEventB(long eventIdA, long eventIdB);
+
+    List<Similaritie> findAllByEventAInOrEventBIn(List<Long> eventIdsA, List<Long> eventIdsB);
+
 }
