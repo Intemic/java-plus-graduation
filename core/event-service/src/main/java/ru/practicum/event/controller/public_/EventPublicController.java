@@ -7,16 +7,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.StatsClient;
+import ru.practicum.client.UserActionClient;
 import ru.practicum.core.interaction.api.dto.event.EventFullDto;
 import ru.practicum.core.interaction.api.dto.event.EventShortDto;
 import ru.practicum.event.service.EventService;
 import ru.practicum.event.utill.EventGetPublicParam;
+import ru.practicum.ewm.stats.proto.ActionTypeProto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Публичный контроллер для операций с событиями.
@@ -30,8 +29,7 @@ public class EventPublicController {
     private static final String APPLICATION = "main-service";
     private static final String EVENT_URI_PATTERN = "/events/%d";
     private final EventService eventService;
-    private final StatsClient statsClient;
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final UserActionClient userActionClient;
 
     /**
      * Получает список событий с фильтрацией для публичного доступа.
@@ -76,7 +74,6 @@ public class EventPublicController {
                 .build();
 
         List<EventShortDto> events = eventService.getEventsByPublic(param);
-        statsClient.saveStat(APPLICATION, request.getRequestURI(), request.getRemoteAddr());
         return events;
     }
 
@@ -89,10 +86,25 @@ public class EventPublicController {
      */
     @GetMapping("/{id}")
     public EventFullDto getEvent(@PathVariable @Positive long id,
-                                 HttpServletRequest request) {
+                                 HttpServletRequest request,
+                                 @RequestHeader("X-EWM-USER-ID") long userId) {
         EventFullDto eventFullDto = eventService.getEventByPublic(id);
-        executorService.execute(() ->
-                statsClient.saveStat(APPLICATION, request.getRequestURI(), request.getRemoteAddr()));
+        userActionClient.collectUserAction(userId, id, ActionTypeProto.ACTION_VIEW);
         return eventFullDto;
+    }
+
+    @GetMapping("/recommendations")
+    public List<EventFullDto> getRecommendations(@RequestHeader("X-EWM-USER-ID") long userId) {
+        return eventService.getRecommendations(userId);
+    }
+
+    @PutMapping("/{eventId}/like")
+    public boolean likeEvent(@PathVariable @Positive long eventId,
+                             @RequestHeader("X-EWM-USER-ID") long userId) {
+        boolean result = eventService.likeEvent(eventId, userId);
+        if (result)
+            userActionClient.collectUserAction(userId, eventId, ActionTypeProto.ACTION_LIKE);
+
+        return result;
     }
 }

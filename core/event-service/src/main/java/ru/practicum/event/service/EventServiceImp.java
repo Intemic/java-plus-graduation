@@ -1,13 +1,12 @@
 package ru.practicum.event.service;
 
-import dto.ViewStatsDto;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.StatsClient;
+import ru.practicum.client.RecommendationsClient;
 import ru.practicum.core.interaction.api.client.CategoryClient;
 import ru.practicum.core.interaction.api.client.RequestClient;
 import ru.practicum.core.interaction.api.client.UserClient;
@@ -27,6 +26,7 @@ import ru.practicum.event.utill.EventGetPublicParam;
 import ru.practicum.core.interaction.api.exception.BadRequestException;
 import ru.practicum.core.interaction.api.exception.ConflictResource;
 import ru.practicum.core.interaction.api.exception.NotFoundResource;
+import ru.practicum.ewm.stats.proto.RecommendedEventProto;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -39,7 +39,6 @@ import static ru.practicum.event.specification.EventSpecification.*;
  * Реализация сервиса для работы с событиями.
  */
 @Service
-//@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class EventServiceImp implements EventService {
     private static final String EVENT_URI_PATTERN = "/events/%d";
@@ -47,7 +46,7 @@ public class EventServiceImp implements EventService {
     private final UserClient userService;
     private final EventRepository eventRepository;
     private final RequestClient requestRepository;
-    private final StatsClient statsClient;
+    private final RecommendationsClient recommendationsClient;
     private Map<Long, UserDto> userDtoMap = new HashMap<>();
     private Map<Long, CategoryDto> categoryDtoMap = new HashMap<>();
 
@@ -55,12 +54,12 @@ public class EventServiceImp implements EventService {
                            UserClient userService,
                            EventRepository eventRepository,
                            RequestClient requestRepository,
-                           StatsClient statsClient) {
+                           RecommendationsClient recommendationsClient) {
         this.categoryService = categoryService;
         this.userService = userService;
         this.eventRepository = eventRepository;
         this.requestRepository = requestRepository;
-        this.statsClient = statsClient;
+        this.recommendationsClient = recommendationsClient;
     }
 
     @Override
@@ -74,11 +73,11 @@ public class EventServiceImp implements EventService {
     public EventFullDto get(long userId, long eventId) {
         Event event = getEventByIdAndInitiatorId(eventId, userId);
         Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
-        Long views = getViewsForEvent(event.getCreatedOn(), eventId);
+        Double rating = getRatingForEvent(eventId);
         return EventMapper
                 .toEventFullDto(event,
                         confirmedRequests,
-                        views,
+                        rating,
                         getUserDtoMap(List.of(event.getInitiatorId())),
                         getCategoryDtoMap(List.of(event.getCategoryId())));
     }
@@ -113,7 +112,7 @@ public class EventServiceImp implements EventService {
         Event savedEvent = eventRepository.save(event);
         return EventMapper.toEventFullDto(savedEvent,
                 0L,
-                0L,
+                0.0,
                 getUserDtoMap(List.of(savedEvent.getInitiatorId())),
                 getCategoryDtoMap(List.of(savedEvent.getCategoryId())));
     }
@@ -147,10 +146,10 @@ public class EventServiceImp implements EventService {
 
         Event updatedEvent = eventRepository.save(event);
         Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
-        Long views = getViewsForEvent(event.getCreatedOn(), eventId);
+        Double rating = getRatingForEvent(eventId);
         return EventMapper.toEventFullDto(updatedEvent,
                 confirmedRequests,
-                views,
+                rating,
                 getUserDtoMap(List.of(updatedEvent.getInitiatorId())),
                 getCategoryDtoMap(List.of(updatedEvent.getCategoryId())));
     }
@@ -299,18 +298,9 @@ public class EventServiceImp implements EventService {
         Map<Long, Event> eventMap = events.stream()
                 .collect(Collectors.toMap(Event::getId, Function.identity()));
 
-        List<String> listUrl = eventMap.keySet().stream()
-                .map(EVENT_URI_PATTERN::formatted)
-                .collect(Collectors.toList());
-
-        Optional<LocalDateTime> start = eventMap.values().stream()
-                .map(Event::getCreatedOn)
-                .min(LocalDateTime::compareTo);
-
-        Map<String, Long> statsCount = statsClient
-                .getStats(start.orElse(LocalDateTime.now().minusYears(1)), LocalDateTime.now(), listUrl, true)
+        Map<Long, Double> eventScope = recommendationsClient.getInteractionsCount(eventMap.keySet().stream().toList())
                 .stream()
-                .collect(Collectors.toMap(ViewStatsDto::getUri, ViewStatsDto::getHits));
+                .collect(Collectors.toMap(RecommendedEventProto::getEventId, RecommendedEventProto::getScore));
 
         List<Long> initiatorIds = events.stream()
                 .map(Event::getInitiatorId)
@@ -324,9 +314,9 @@ public class EventServiceImp implements EventService {
 
         return eventMap.values().stream()
                 .map(event -> {
-                    Long views = statsCount.getOrDefault(EVENT_URI_PATTERN.formatted(event.getId()), 0L);
+                    Double rating = eventScope.getOrDefault(event.getId(), 0.0);
                     return EventMapper.mapToEventShortDto(event.toBuilder()
-                            .views(views)
+                            .rating(rating)
                             .build(), userDtoMap, categoryDtoMap);
                 }).toList();
     }
@@ -388,8 +378,45 @@ public class EventServiceImp implements EventService {
         categoryDtoMap = getCategoryDtoMap(categoryIds);
 
         return events.stream()
-                .map( event ->  EventMapper.mapToEventFullDto(event, userDtoMap, categoryDtoMap))
+                .map(event -> EventMapper.mapToEventFullDto(event, userDtoMap, categoryDtoMap))
                 .toList();
+    }
+
+    @Override
+    public boolean likeEvent(long eventId, long userId) {
+        requestRepository.findByEventId(eventId).stream()
+                .filter(request -> request.getRequester() == userId)
+                .findFirst()
+                .orElseThrow(() -> new NotFoundResource("Пользователь не посещал мероприятие " + eventId));
+
+        return true;
+    }
+
+    @Override
+    public List<EventFullDto> getRecommendations(long userId) {
+        List<EventFullDto> eventFullDtos = List.of();
+
+        List<Long> eventsId = recommendationsClient.getRecommendationsForUser(userId, 10).stream()
+                .map(RecommendedEventProto::getEventId)
+                .toList();
+        if (!eventsId.isEmpty()) {
+            Map<Long, Event> events = eventRepository.findByIdIn(eventsId).stream()
+                    .collect(Collectors.toMap(Event::getId, Function.identity()));
+            List<Long> initiatorIds = events.values().stream()
+                    .map(Event::getInitiatorId)
+                    .toList();
+            userDtoMap = getUserDtoMap(initiatorIds);
+            List<Long> categoryIds = events.values().stream()
+                    .map(Event::getCategoryId)
+                    .toList();
+            categoryDtoMap = getCategoryDtoMap(categoryIds);
+
+            eventFullDtos = eventsId.stream().map(eventId ->
+                            EventMapper.mapToEventFullDto(events.get(eventId), userDtoMap, categoryDtoMap))
+                    .toList();
+        }
+
+        return eventFullDtos;
     }
 
     private Event getEventByIdAndInitiatorId(long eventId, long userId) {
@@ -427,13 +454,12 @@ public class EventServiceImp implements EventService {
         }
     }
 
-    private Long getViewsForEvent(LocalDateTime start, Long eventId) {
-        List<ViewStatsDto> listStats = statsClient.getStats(start, LocalDateTime.now(),
-                List.of(EVENT_URI_PATTERN.formatted(eventId)), true);
-        if (!listStats.isEmpty()) {
-            return listStats.getFirst().getHits();
-        }
-        return 0L;
+    private Double getRatingForEvent(Long eventId) {
+        List<RecommendedEventProto> list = recommendationsClient.getInteractionsCount(List.of(eventId));
+        if (!list.isEmpty())
+            return list.getFirst().getScore();
+
+        return 0.0;
     }
 
     private void checkUpdateEventAdmin(Event event, UpdateEventAdminRequest updateEvent) {
@@ -469,33 +495,22 @@ public class EventServiceImp implements EventService {
         Map<Long, Event> eventMap = events.stream()
                 .collect(Collectors.toMap(Event::getId, Function.identity()));
 
-//        Map<Long, Long> eventCountRequest = requestRepository.findAllByEventIdInAndStatus(eventMap.keySet(),
-//                        Status.CONFIRMED).stream()
         Map<Long, Long> eventCountRequest = requestRepository
                 .findAllByEventIdInAndStatus(RequestStatus.CONFIRMED, eventMap.keySet()).stream()
                 .collect(Collectors.groupingBy(request -> request.getEvent(),
                         Collectors.counting()));
 
-        List<String> listUrl = eventMap.keySet().stream()
-                .map(EVENT_URI_PATTERN::formatted)
-                .collect(Collectors.toList());
-
-        Optional<LocalDateTime> start = eventMap.values().stream()
-                .map(Event::getCreatedOn)
-                .min(LocalDateTime::compareTo);
-
-        Map<String, Long> statsCount = statsClient
-                .getStats(start.orElse(LocalDateTime.now().minusYears(1)), LocalDateTime.now().plusMinutes(1), listUrl, true)
+        Map<Long, Double> eventScope = recommendationsClient.getInteractionsCount(eventMap.keySet().stream().toList())
                 .stream()
-                .collect(Collectors.toMap(ViewStatsDto::getUri, ViewStatsDto::getHits));
+                .collect(Collectors.toMap(RecommendedEventProto::getEventId, RecommendedEventProto::getScore));
 
         return eventMap.values().stream()
                 .map(event -> {
                     Long confirmedRequests = eventCountRequest.getOrDefault(event.getId(), 0L);
-                    Long views = statsCount.getOrDefault(EVENT_URI_PATTERN.formatted(event.getId()), 0L);
+                    Double rating = eventScope.getOrDefault(event.getId(), 0.0);
                     return event.toBuilder()
                             .confirmedRequests(confirmedRequests)
-                            .views(views)
+                            .rating(rating)
                             .build();
                 }).toList();
     }

@@ -42,5 +42,5 @@ public class EventFullDto {
 
     private EventState state;
     private String title;
-    private Long views;
+    private Double rating;
 }

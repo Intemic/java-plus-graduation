@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.client.UserActionClient;
 import ru.practicum.core.interaction.api.dto.request.ParticipationRequestDto;
+import ru.practicum.ewm.stats.proto.ActionTypeProto;
 import ru.practicum.request.service.RequestService;
 
 import java.util.List;
@@ -18,8 +20,8 @@ import java.util.List;
 @RequestMapping("/users/{userId}/requests")
 @RequiredArgsConstructor
 public class RequestController {
-
     private final RequestService requestService;
+    private final UserActionClient userActionClient;
 
     /**
      * Получает все заявки пользователя.
@@ -43,7 +45,9 @@ public class RequestController {
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto createRequest(@PathVariable @Positive Long userId,
                                                  @RequestParam @Positive Long eventId) {
-        return requestService.createRequest(userId, eventId);
+        ParticipationRequestDto requestDto = requestService.createRequest(userId, eventId);
+        userActionClient.collectUserAction(userId, eventId, ActionTypeProto.ACTION_REGISTER);
+        return requestDto;
     }
 
     /**

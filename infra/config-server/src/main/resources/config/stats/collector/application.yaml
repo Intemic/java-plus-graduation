@@ -1,0 +1,22 @@
+server:
+  port: 0
+
+grpc:
+  server:
+    port: 0
+
+collector:
+  kafka:
+    main:
+      server_config: "localhost:9092"
+    topics:
+      action: "stats.user-actions.v1"
+    serializer_class:
+      key: "org.apache.kafka.common.serialization.LongSerializer"
+      value: "ru.yandex.practicum.kafka.serialization.BaseAvroSerializer"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, beans, mappings

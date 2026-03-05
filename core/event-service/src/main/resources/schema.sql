@@ -15,3 +15,4 @@ CREATE TABLE IF NOT EXISTS events(
     location_lon float,
     state VARCHAR(20)
 );
+
